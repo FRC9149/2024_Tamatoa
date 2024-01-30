@@ -14,9 +14,6 @@ static CANSparkMax GearControl = new CANSparkMax(0, MotorType.kBrushless);
 
  public static void jksdfh() {
     GearControl.set(1);
-
-
-
  }
 
 }
