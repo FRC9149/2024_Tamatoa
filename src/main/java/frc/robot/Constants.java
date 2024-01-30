@@ -32,6 +32,10 @@ public final class Constants
 
     public static final double MAX_ACCELERATION = 2;
   }
+  public static final class EndEffector {
+    public static final int IntakeButtonPort = 0;
+    public static final int OutakeButtonPort = 0;
+  }
 
   public static final class Drivebase
   {
