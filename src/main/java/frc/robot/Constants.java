@@ -24,6 +24,21 @@ public final class Constants
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
 
+  public static final class ControllerButtons {
+    public static final int aButton = 0;
+    public static final int bButton = 1;
+    public static final int xButton = 2;
+    public static final int yButton = 3;
+    public static final int r1Button = 5;
+    public static final int r2Button = 4;
+    public static final int rightTrigger = 3;
+    public static final int leftTrigger = 2;
+    public static final int capture = 6;
+    public static final int menu = 7;
+    public static final int[] LeftStick = new int[]{0, 1};
+    public static final int[] rightStick = new int[]{4, 5}
+  }
+
   public static final class Auton
   {
 
