@@ -13,5 +13,5 @@ public class VisionSubsystem {
     public static void init() {
         Table.getEntry("pipeline").setNumber(0);
         Table.getEntry("camMode").setNumber(0);
-    }
+    }    
 }
