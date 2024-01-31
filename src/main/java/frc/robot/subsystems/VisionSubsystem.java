@@ -31,6 +31,6 @@ public class VisionSubsystem {
     }
 
     private static double Distance(double height) {
-        return (Math.abs(height - cameraHeight)/Math.tan(cameraYAngle+Table.getEntry("ty").getDouble(0)));
+        return (height - cameraHeight/Math.tan(cameraYAngle+Table.getEntry("ty").getDouble(0)));
     }
 }
