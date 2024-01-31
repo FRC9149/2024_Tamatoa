@@ -8,6 +8,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.proto.Controller;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.ControllerButtons;
 import frc.robot.commands.EmptyCommand;
 import frc.robot.commands.noteintake.IntakeControl;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
@@ -119,14 +121,14 @@ public class RobotContainer
                               ));
     */
 
-    new JoystickButton(driverXbox, 2).whileTrue(new IntakeControl(false));
+    new JoystickButton(driverXbox, ControllerButtons.r1Button).whileTrue(new IntakeControl(false));
     //we only need 1 button for the intake (we can move the note to outake with a different function)
 
-    new JoystickButton(driverXbox, 3).onTrue( drivebase.driveToPose(waypoint) );//x
-    new JoystickButton(driverXbox, 5).onTrue( drivebase.driveToPose(waypointA) );//a
-    new JoystickButton(driverXbox, 5).onTrue( drivebase.driveToPose(waypointB) );//b
+    new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue( drivebase.driveToPose(waypoint) );
+    new JoystickButton(driverXbox, ControllerButtons.aButton).onTrue( drivebase.driveToPose(waypointA) );
+    new JoystickButton(driverXbox, ControllerButtons.bButton).onTrue( drivebase.driveToPose(waypointB) );
 
-    new JoystickButton(driverXbox, 4).onTrue( Commands.deferredProxy(() -> {    //y
+    new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue( Commands.deferredProxy(() -> {
       waypoint = drivebase.getPose();
       return new EmptyCommand(); // return an empty Command to satisfy return value
     }));
