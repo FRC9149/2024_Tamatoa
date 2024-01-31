@@ -119,7 +119,7 @@ public class RobotContainer
                               ));
     */
 
-    //new JoystickButton(driverXbox, 2).whileTrue(new IntakeControl());
+    new JoystickButton(driverXbox, 2).whileTrue(new IntakeControl(false));
     //we only need 1 button for the intake (we can move the note to outake with a different function)
 
     new JoystickButton(driverXbox, 3).onTrue( drivebase.driveToPose(waypoint) );//x
