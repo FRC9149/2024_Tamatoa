@@ -41,7 +41,7 @@ public class IntakeControl extends Command {
       return true;
    }
    @Override
-   public void end(){
+   public void end(boolean interuppted){
       GearControl.set(0);
    }
 

@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.EmptyCommand;
 import frc.robot.commands.noteintake.IntakeControl;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -44,6 +45,8 @@ public class RobotContainer
 
   //declare a pose2d for waypoint
   private static Pose2d waypoint;
+  private static final Pose2d waypointA = new Pose2d(2, 7, new Rotation2d(90)); // Pickup
+  private static final Pose2d waypointB = new Pose2d(15, 6, new Rotation2d(180)); // Speaker
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -117,11 +120,16 @@ public class RobotContainer
     */
 
     //new JoystickButton(driverXbox, 2).whileTrue(new IntakeControl());
-      //use instead of checking inside of the command
+    //we only need 1 button for the intake (we can move the note to outake with a different function)
 
-    //new JoystickButton(driverXbox, 3).onTrue(new goToWaypoint(waypoint) ); //Todo: add new command called goToWaypoint
+    new JoystickButton(driverXbox, 3).onTrue( drivebase.driveToPose(waypoint) );//x
+    new JoystickButton(driverXbox, 5).onTrue( drivebase.driveToPose(waypointA) );//a
+    new JoystickButton(driverXbox, 5).onTrue( drivebase.driveToPose(waypointB) );//b
 
-    
+    new JoystickButton(driverXbox, 4).onTrue( Commands.deferredProxy(() -> {    //y
+      waypoint = drivebase.getPose();
+      return new EmptyCommand(); // return an empty Command to satisfy return value
+    }));
 
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
   }
