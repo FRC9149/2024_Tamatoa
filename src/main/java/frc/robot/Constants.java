@@ -36,7 +36,7 @@ public final class Constants
     public static final int capture = 6;
     public static final int menu = 7;
     public static final int[] LeftStick = new int[]{0, 1};
-    public static final int[] rightStick = new int[]{4, 5}
+    public static final int[] rightStick = new int[]{4, 5};
   }
 
   public static final class Auton
