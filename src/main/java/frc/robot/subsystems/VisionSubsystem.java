@@ -7,34 +7,38 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class VisionSubsystem {
-    public static final NetworkTable Table;
+    public static NetworkTable Table;
 
     public static final double cameraHeight = 0;
     public static final double cameraXAngle = 0;
     public static final double cameraYAngle = 0;
 
     public static void init() {
-        try {
-            NetworkTable = NetworkTableInstance.getDefault().getTable("limelight");
+        Table = NetworkTableInstance.getDefault().getTable("limelight");
+        if(Table.containsKey("limelight")){
             Table.getEntry("pipeline").setNumber(0);
             Table.getEntry("camMode").setNumber(0);
-        }catch (Exception e) {}
+        }
     }
 
     public static Pose2d PickUpNote() {
-        if(NetworkTable == null) return new Pose2d();
-        Pose2d returnPose;
+        if(Table.containsKey("limelight")){
+            Pose2d returnPose;
 
-        Rotation2d rotation = Rotation2d.fromDegrees(Table.getEntry("tx").getDouble(0) - cameraXAngle);
-        Translation2d translation = new Translation2d(Distance(0), rotation);
+            Rotation2d rotation = Rotation2d.fromDegrees(Table.getEntry("tx").getDouble(0) - cameraXAngle);
+            Translation2d translation = new Translation2d(Distance(0), rotation);
 
-        returnPose = new Pose2d(translation, rotation);
+            returnPose = new Pose2d(translation, rotation);
 
-        return returnPose;
+            return returnPose;
+        }
+        return new Pose2d();
     }
 
     private static double Distance(double height) {
-        if(NetworkTable == null) return 0;
-        return (height - cameraHeight/Math.tan(cameraYAngle+Table.getEntry("ty").getDouble(0)));
+        if(Table.containsKey("limelight")){
+            return (height - cameraHeight/Math.tan(cameraYAngle+Table.getEntry("ty").getDouble(0)));
+        }
+        return 0;
     }
 }
