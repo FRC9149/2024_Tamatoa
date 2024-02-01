@@ -14,7 +14,10 @@ public class VisionSubsystem {
     public static final double cameraYAngle = 0;
 
     public static void init() {
-        Table = NetworkTableInstance.getDefault().getTable("limelight");
+        /*try{
+        *    Table = NetworkTableInstance.getDefault().getTable("limelight");
+        *}catch (Exception e) {}
+        */
         if(Table.containsKey("limelight")){
             Table.getEntry("pipeline").setNumber(0);
             Table.getEntry("camMode").setNumber(0);
