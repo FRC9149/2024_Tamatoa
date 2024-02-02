@@ -12,11 +12,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class NoteSubsystem extends SubsystemBase {
-    private static final CANSparkMax IntakeMotor = new CANSparkMax(0, MotorType.kBrushless);
-    private static final CANSparkMax AngleMotor = new CANSparkMax(0, MotorType.kBrushless);
+    private static final CANSparkMax IntakeMotor = new CANSparkMax(40, MotorType.kBrushless);
+    private static final CANSparkMax AngleMotor = new CANSparkMax(50, MotorType.kBrushless);
     private static final CANSparkMax[] launchMotors = new CANSparkMax[]{
-        new CANSparkMax(0, MotorType.kBrushless),
-        new CANSparkMax(0, MotorType.kBrushless)
+        new CANSparkMax(20, MotorType.kBrushless),
+        new CANSparkMax(30, MotorType.kBrushless)
     };
 
     private static final DutyCycleEncoder AngleEncoder = new DutyCycleEncoder(0);

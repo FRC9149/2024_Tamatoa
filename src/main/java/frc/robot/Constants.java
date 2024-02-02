@@ -29,8 +29,8 @@ public final class Constants
     public static final int bButton = 1;
     public static final int xButton = 2;
     public static final int yButton = 3;
-    public static final int r1Button = 5;
-    public static final int r2Button = 4;
+    public static final int rbButton = 5;
+    public static final int lbButton = 4;
     public static final int rightTrigger = 3;
     public static final int leftTrigger = 2;
     public static final int capture = 6;

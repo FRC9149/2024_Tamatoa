@@ -1,26 +1,21 @@
 package frc.robot.commands.noteintake;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkAbsoluteEncoder;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.EndEffector;
+import frc.robot.subsystems.NoteSubsystem;
 
 
 public class IntakeControl extends Command {
 
-   private static CANSparkMax GearControl = new CANSparkMax(0, MotorType.kBrushless);
-   private boolean isReversed = false;
+   private NoteSubsystem system;
 
-   public IntakeControl (boolean isReversed) {
-      this.isReversed = isReversed;
+   public IntakeControl (NoteSubsystem NoteSubsystemObj) {
+      system = NoteSubsystemObj;
+      addRequirements(system);
    }
 
    @Override
    public void initialize() {
-      GearControl.set(isReversed ? -1 : 1);
+      system.runIntake(true);
    }
    @Override
    public boolean isFinished() {
@@ -28,7 +23,7 @@ public class IntakeControl extends Command {
    }
    @Override
    public void end(boolean interuppted){
-      GearControl.set(0);
+      system.stopIntake();
    }
 
 }

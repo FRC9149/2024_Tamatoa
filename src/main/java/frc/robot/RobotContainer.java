@@ -23,8 +23,10 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ControllerButtons;
 import frc.robot.commands.EmptyCommand;
 import frc.robot.commands.noteintake.IntakeControl;
+import frc.robot.commands.noteintake.OutakeControl;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.NoteSubsystem;
 import java.io.File;
 
 /**
@@ -38,6 +40,7 @@ public class RobotContainer
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                          "swerve/neo"));
+  private final NoteSubsystem noteControl = new NoteSubsystem(false, false, false, false);
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   CommandJoystick driverController = new CommandJoystick(1);
@@ -96,7 +99,7 @@ public class RobotContainer
         () -> driverXbox.getRawAxis(2));
 
     drivebase.setDefaultCommand(
-        !RobotBase.isSimulation() ? driveFieldOrientedDirectAngle : driveFieldOrientedDirectAngleSim);
+        !RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim);
   }
 
   /**
@@ -120,17 +123,19 @@ public class RobotContainer
                               ));
     */
 
-    new JoystickButton(driverXbox, ControllerButtons.r1Button).whileTrue(new IntakeControl(false));
+    new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl).unless(()->{return !driverXbox.getLeftBumper();}));
+    new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl).unless(()->{return !driverXbox.getRightBumper();}));
+    //new JoystickButton(driverXbox, ControllerButtons.rbButton).and(driverXbox.getLeftBumper()).whileTrue(getAutonomousCommand())
     //we only need 1 button for the intake (we can move the note to outake with a different function)
 
-    new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue( drivebase.driveToPose(waypoint) );
-    new JoystickButton(driverXbox, ControllerButtons.aButton).onTrue( drivebase.driveToPose(waypointA) );
-    new JoystickButton(driverXbox, ControllerButtons.bButton).onTrue( drivebase.driveToPose(waypointB) );
-
-    new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue( Commands.deferredProxy(() -> {
-      waypoint = drivebase.getPose();
-      return new EmptyCommand(); // return an empty Command to satisfy return value
-    }));
+    //new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue( drivebase.driveToPose(waypoint) );
+    //new JoystickButton(driverXbox, ControllerButtons.aButton).onTrue( drivebase.driveToPose(waypointA) );
+    //new JoystickButton(driverXbox, ControllerButtons.bButton).onTrue( drivebase.driveToPose(waypointB) );
+//
+    //new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue( Commands.deferredProxy(() -> {
+    //  waypoint = drivebase.getPose();
+    //  return new EmptyCommand(); // return an empty Command to satisfy return value
+    //}));
 
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
   }

@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-public class VisionSubsystem {
+public class VisionSubsystem {/*
     public static NetworkTable Table;
 
     public static final double cameraHeight = 0;
@@ -14,10 +14,10 @@ public class VisionSubsystem {
     public static final double cameraYAngle = 0;
 
     public static void init() {
-        /*try{
+        try{
         *    Table = NetworkTableInstance.getDefault().getTable("limelight");
         *}catch (Exception e) {}
-        */
+        
         if(Table.containsKey("limelight")){
             Table.getEntry("pipeline").setNumber(0);
             Table.getEntry("camMode").setNumber(0);
@@ -43,5 +43,5 @@ public class VisionSubsystem {
             return (height - cameraHeight/Math.tan(cameraYAngle+Table.getEntry("ty").getDouble(0)));
         }
         return 0;
-    }
+    }*/
 }
