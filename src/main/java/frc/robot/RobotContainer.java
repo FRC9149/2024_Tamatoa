@@ -25,9 +25,11 @@ import frc.robot.commands.EmptyCommand;
 import frc.robot.commands.noteintake.IntakeControl;
 import frc.robot.commands.noteintake.OutakeControl;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
+import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.NoteSubsystem;
 import java.io.File;
+import java.lang.management.OperatingSystemMXBean;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -38,19 +40,13 @@ public class RobotContainer
 {
 
   // The robot's subsystems and commands are defined here...
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-                                                                         "swerve/neo"));
+  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
   private final NoteSubsystem noteControl = new NoteSubsystem(false, false, false, false);
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   CommandJoystick driverController = new CommandJoystick(1);
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
-
-  //declare a pose2d for waypoint
-  private static Pose2d waypoint;
-  private static final Pose2d waypointA = new Pose2d(2, 7, new Rotation2d(90)); // Pickup
-  private static final Pose2d waypointB = new Pose2d(15, 6, new Rotation2d(180)); // Speaker
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -80,8 +76,9 @@ public class RobotContainer
     Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
         () -> MathUtil.applyDeadband(-driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(-driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> driverXbox.getRightX(),
-        () -> driverXbox.getRightY());
+        () -> MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
+        () -> MathUtil.applyDeadband(driverXbox.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)
+    );
 
     // Applies deadbands and inverts controls because joysticks
     // are back-right positive while robot
@@ -98,8 +95,14 @@ public class RobotContainer
         () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
         () -> driverXbox.getRawAxis(2));
 
+    Command fieldDriveCommand = new AbsoluteFieldDrive(drivebase,
+        () -> {return MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND);},
+        () -> {return MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND);},
+        () -> {return drivebase.getHeading().getDegrees();}
+    );
+
     drivebase.setDefaultCommand(
-        !RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim);
+        !RobotBase.isSimulation() ? fieldDriveCommand : driveFieldOrientedDirectAngleSim);
   }
 
   /**
@@ -127,17 +130,6 @@ public class RobotContainer
     new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl).unless(()->{return !driverXbox.getRightBumper();}));
     //new JoystickButton(driverXbox, ControllerButtons.rbButton).and(driverXbox.getLeftBumper()).whileTrue(getAutonomousCommand())
     //we only need 1 button for the intake (we can move the note to outake with a different function)
-
-    //new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue( drivebase.driveToPose(waypoint) );
-    //new JoystickButton(driverXbox, ControllerButtons.aButton).onTrue( drivebase.driveToPose(waypointA) );
-    //new JoystickButton(driverXbox, ControllerButtons.bButton).onTrue( drivebase.driveToPose(waypointB) );
-//
-    //new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue( Commands.deferredProxy(() -> {
-    //  waypoint = drivebase.getPose();
-    //  return new EmptyCommand(); // return an empty Command to satisfy return value
-    //}));
-
-//    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
   }
 
   /**
