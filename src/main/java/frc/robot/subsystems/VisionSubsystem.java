@@ -30,14 +30,11 @@ public class VisionSubsystem {
      */
     public static Pose2d PickUpNote() {
         if(Table.containsKey("limelight")){
-            Pose2d returnPose;
 
             Rotation2d rotation = Rotation2d.fromDegrees(Table.getEntry("tx").getDouble(0) - cameraXAngle);
             Translation2d translation = new Translation2d(Distance(0), rotation);
 
-            returnPose = new Pose2d(translation, rotation);
-
-            return returnPose;
+            return new Pose2d(translation, rotation);
         }
         return new Pose2d();
     }
