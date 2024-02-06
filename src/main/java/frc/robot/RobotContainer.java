@@ -51,8 +51,8 @@ public class RobotContainer
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer()
-  {
+  public RobotContainer() {
+    new InstantCommand(drivebase::zeroGyro).schedule();
     // Configure the trigger bindings
     configureBindings();
 
@@ -76,8 +76,8 @@ public class RobotContainer
     Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
         () -> MathUtil.applyDeadband(-driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(-driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
-        () -> MathUtil.applyDeadband(driverXbox.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)
+        () -> MathUtil.applyDeadband( driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
+        () -> MathUtil.applyDeadband( driverXbox.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)
     );
 
     // Applies deadbands and inverts controls because joysticks
@@ -95,14 +95,7 @@ public class RobotContainer
         () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
         () -> driverXbox.getRawAxis(2));
 
-    Command fieldDriveCommand = new AbsoluteFieldDrive(drivebase,
-        () -> {return MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND);},
-        () -> {return MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND);},
-        () -> {return drivebase.getHeading().getDegrees();}
-    );
-
-    drivebase.setDefaultCommand(
-        !RobotBase.isSimulation() ? fieldDriveCommand : driveFieldOrientedDirectAngleSim);
+    drivebase.setDefaultCommand( driveFieldOrientedDirectAngle );
   }
 
   /**
@@ -119,12 +112,11 @@ public class RobotContainer
     /* Example commands
     new JoystickButton(driverXbox, 1).onTrue((new InstantCommand(drivebase::zeroGyro)));
     new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
-    new JoystickButton(driverXbox,
-                       2).whileTrue(
+    */new JoystickButton(driverXbox, 2).whileTrue(
         Commands.deferredProxy(() -> drivebase.driveToPose(
                                    new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
                               ));
-    */
+    
 
     new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl).unless(()->{return !driverXbox.getLeftBumper();}));
     new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl).unless(()->{return !driverXbox.getRightBumper();}));
