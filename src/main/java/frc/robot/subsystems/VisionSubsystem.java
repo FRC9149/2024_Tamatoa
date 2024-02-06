@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionSubsystem {
     public static NetworkTable Table;
@@ -16,7 +17,9 @@ public class VisionSubsystem {
     public static void init() {
         try{
            Table = NetworkTableInstance.getDefault().getTable("limelight");
-        }catch (Exception e) {}
+        }catch (Exception e) {
+            SmartDashboard.putString("ERROR: ", e.getMessage());
+        }
         
         if(Table.containsKey("limelight")){
             Table.getEntry("pipeline").setNumber(0);
