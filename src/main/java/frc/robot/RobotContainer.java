@@ -28,6 +28,8 @@ import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.NoteSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
+
 import java.io.File;
 import java.lang.management.OperatingSystemMXBean;
 
@@ -52,7 +54,6 @@ public class RobotContainer
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    new InstantCommand(drivebase::zeroGyro).schedule();
     // Configure the trigger bindings
     configureBindings();
 
@@ -76,8 +77,8 @@ public class RobotContainer
     Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
         () -> MathUtil.applyDeadband(-driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(-driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> MathUtil.applyDeadband( driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
-        () -> MathUtil.applyDeadband( driverXbox.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)
+        () -> MathUtil.applyDeadband(-driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
+        () -> MathUtil.applyDeadband(-driverXbox.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)
     );
 
     // Applies deadbands and inverts controls because joysticks
@@ -90,10 +91,10 @@ public class RobotContainer
         () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
         () -> driverXbox.getRawAxis(2));
 
-    Command driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
+    /*Command driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
         () -> MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> driverXbox.getRawAxis(2));
+        () -> driverXbox.getRawAxis(2));*/
 
     drivebase.setDefaultCommand( driveFieldOrientedDirectAngle );
   }
@@ -107,16 +108,20 @@ public class RobotContainer
    */
   private void configureBindings()
   {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-
-    /* Example commands
-    new JoystickButton(driverXbox, 1).onTrue((new InstantCommand(drivebase::zeroGyro)));
-    new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
-    */new JoystickButton(driverXbox, 2).whileTrue(
+ 
+    new JoystickButton(driverXbox, ControllerButtons.menu).onTrue((new InstantCommand(drivebase::zeroGyro)));
+    new JoystickButton(driverXbox, ControllerButtons.bButton).whileTrue(
         Commands.deferredProxy(() -> drivebase.driveToPose(
-                                   new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
+                                   new Pose2d(new Translation2d(0, 0), Rotation2d.fromDegrees(0)))
                               ));
-    
+    new JoystickButton(driverXbox, ControllerButtons.aButton).whileTrue(
+      Commands.deferredProxy(() -> drivebase.driveCommand(
+        () -> 0,
+        () -> 1,
+        () -> 0,
+        () -> 0
+      ))
+    );
 
     new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl).unless(()->{return !driverXbox.getLeftBumper();}));
     new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl).unless(()->{return !driverXbox.getRightBumper();}));

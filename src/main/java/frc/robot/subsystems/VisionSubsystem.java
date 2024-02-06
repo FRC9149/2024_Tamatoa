@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-public class VisionSubsystem {/*
+public class VisionSubsystem {
     public static NetworkTable Table;
 
     public static final double cameraHeight = 0;
@@ -15,8 +15,8 @@ public class VisionSubsystem {/*
 
     public static void init() {
         try{
-        *    Table = NetworkTableInstance.getDefault().getTable("limelight");
-        *}catch (Exception e) {}
+           Table = NetworkTableInstance.getDefault().getTable("limelight");
+        }catch (Exception e) {}
         
         if(Table.containsKey("limelight")){
             Table.getEntry("pipeline").setNumber(0);
@@ -24,6 +24,10 @@ public class VisionSubsystem {/*
         }
     }
 
+    /** A function to find the speed necessary to pick up a note
+     * 
+     * @return A Pose2d that should be converted into translation2d
+     */
     public static Pose2d PickUpNote() {
         if(Table.containsKey("limelight")){
             Pose2d returnPose;
@@ -43,5 +47,5 @@ public class VisionSubsystem {/*
             return (height - cameraHeight/Math.tan(cameraYAngle+Table.getEntry("ty").getDouble(0)));
         }
         return 0;
-    }*/
+    }
 }
