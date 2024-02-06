@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.proto.Controller;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,6 +24,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ControllerButtons;
 import frc.robot.commands.EmptyCommand;
 import frc.robot.commands.noteintake.IntakeControl;
+import frc.robot.commands.noteintake.NoteTransfer;
 import frc.robot.commands.noteintake.OutakeControl;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
@@ -116,17 +118,16 @@ public class RobotContainer
                               ));
     new JoystickButton(driverXbox, ControllerButtons.aButton).whileTrue(
       Commands.deferredProxy(() -> drivebase.driveCommand(
-        () -> 0,
-        () -> 1,
-        () -> 0,
-        () -> 0
+        () -> 0, () -> 1,
+        () -> 0, () -> 0
       ))
     );
 
+
     new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl).unless(()->{return !driverXbox.getLeftBumper();}));
     new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl).unless(()->{return !driverXbox.getRightBumper();}));
-    //new JoystickButton(driverXbox, ControllerButtons.rbButton).and(driverXbox.getLeftBumper()).whileTrue(getAutonomousCommand())
-    //we only need 1 button for the intake (we can move the note to outake with a different function)
+    //new JoystickButton(driverXbox, ControllerButtons.yButton).whileTrue(new NoteTransfer(noteControl, true));
+    //new JoystickButton(driverXbox, ControllerButtons.xButton).whileTrue(new NoteTransfer(noteControl, false));
   }
 
   /**

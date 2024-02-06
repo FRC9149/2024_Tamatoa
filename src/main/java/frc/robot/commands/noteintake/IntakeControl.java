@@ -11,12 +11,9 @@ public class IntakeControl extends Command {
    public IntakeControl (NoteSubsystem NoteSubsystemObj) {
       system = NoteSubsystemObj;
       addRequirements(system);
-   }
-
-   @Override
-   public void initialize() {
       system.runIntake(true);
    }
+
    @Override
    public boolean isFinished() {
       return false;

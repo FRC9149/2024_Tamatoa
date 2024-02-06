@@ -47,10 +47,6 @@ public final class Constants
 
     public static final double MAX_ACCELERATION = 2;
   }
-  public static final class EndEffector {
-    public static final int IntakeButtonPort = 0;
-    public static final int OutakeButtonPort = 0;
-  }
 
   public static final class Drivebase
   {
@@ -61,7 +57,6 @@ public final class Constants
 
   public static class OperatorConstants
   {
-
     // Joystick Deadband
     public static final double LEFT_X_DEADBAND  = 0.1;
     public static final double LEFT_Y_DEADBAND  = 0.1;
