@@ -43,9 +43,7 @@ public class VisionSubsystem {
     }
 
     private static double Distance(double height) {
-        if(Table.containsKey("limelight")){
-            return (height - cameraHeight/Math.tan(cameraYAngle+Table.getEntry("ty").getDouble(0)));
-        }
-        return 0;
+        //already checks to see if limelight is connected in the only functions that call it PickUpNote
+        return (height - cameraHeight/Math.tan(cameraYAngle+Table.getEntry("ty").getDouble(0)));
     }
 }
