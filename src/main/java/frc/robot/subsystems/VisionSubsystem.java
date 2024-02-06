@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionSubsystem {
     public static NetworkTable Table;
@@ -16,7 +17,9 @@ public class VisionSubsystem {
     public static void init() {
         try{
            Table = NetworkTableInstance.getDefault().getTable("limelight");
-        }catch (Exception e) {}
+        }catch (Exception e) {
+            SmartDashboard.putString("ERROR: ", e.getMessage());
+        }
         
         if(Table.containsKey("limelight")){
             Table.getEntry("pipeline").setNumber(0);
@@ -30,22 +33,17 @@ public class VisionSubsystem {
      */
     public static Pose2d PickUpNote() {
         if(Table.containsKey("limelight")){
-            Pose2d returnPose;
 
             Rotation2d rotation = Rotation2d.fromDegrees(Table.getEntry("tx").getDouble(0) - cameraXAngle);
             Translation2d translation = new Translation2d(Distance(0), rotation);
 
-            returnPose = new Pose2d(translation, rotation);
-
-            return returnPose;
+            return new Pose2d(translation, rotation);
         }
         return new Pose2d();
     }
 
     private static double Distance(double height) {
-        if(Table.containsKey("limelight")){
-            return (height - cameraHeight/Math.tan(cameraYAngle+Table.getEntry("ty").getDouble(0)));
-        }
-        return 0;
+        //already checks to see if limelight is connected in the only functions that call it PickUpNote
+        return (height - cameraHeight/Math.tan(cameraYAngle+Table.getEntry("ty").getDouble(0)));
     }
 }
