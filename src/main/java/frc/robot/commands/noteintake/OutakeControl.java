@@ -10,6 +10,7 @@ public class OutakeControl extends Command{
         system = NoteSubsystemObj;
         addRequirements(system);
         system.runLaunch();
+        system.runIntake(false);
     }
 
     @Override
@@ -18,6 +19,6 @@ public class OutakeControl extends Command{
     }
     @Override
     public void end(boolean interuppted) {
-        system.stopLaunch();
+        system.stopAll();
     }
 }
