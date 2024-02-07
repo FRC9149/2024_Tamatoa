@@ -50,8 +50,10 @@ public class NoteTransfer extends Command{
     }
     @Override
     public boolean isFinished() {
-        return pid.atSetPoint();
+        return pid.atSetpoint();
     }
     @Override
-    public void end(boolean interuppted) system.stopAngle();
+    public void end(boolean interuppted) {
+        system.stopAngle();
+    }
 }
