@@ -1,5 +1,6 @@
 package frc.robot.commands.noteintake;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.NoteSubsystem;
 
@@ -11,6 +12,9 @@ public class IntakeControl extends Command {
    public IntakeControl (NoteSubsystem NoteSubsystemObj) {
       system = NoteSubsystemObj;
       addRequirements(system);
+   }
+   @Override
+   public void initialize() {
       system.runIntake(true);
    }
 

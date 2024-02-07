@@ -45,7 +45,7 @@ public class RobotContainer
 
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
-  private final NoteSubsystem noteControl = new NoteSubsystem(false, false, false, false);
+  private final NoteSubsystem noteControl = new NoteSubsystem(false, true, false, false);
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   CommandJoystick driverController = new CommandJoystick(1);
@@ -124,11 +124,10 @@ public class RobotContainer
       ))
     );
 
-
     new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl));
     new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl));
-    //new JoystickButton(driverXbox, ControllerButtons.yButton).whileTrue(new NoteTransfer(noteControl, true));
-    //new JoystickButton(driverXbox, ControllerButtons.xButton).whileTrue(new NoteTransfer(noteControl, false));
+    new JoystickButton(driverXbox, ControllerButtons.yButton).whileTrue(new NoteTransfer(noteControl, true));
+    new JoystickButton(driverXbox, ControllerButtons.xButton).whileTrue(new NoteTransfer(noteControl, false));
   }
 
   /**

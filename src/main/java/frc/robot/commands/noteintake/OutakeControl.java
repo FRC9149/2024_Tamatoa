@@ -9,10 +9,13 @@ public class OutakeControl extends Command{
     public OutakeControl(NoteSubsystem NoteSubsystemObj) {
         system = NoteSubsystemObj;
         addRequirements(system);
+    }
+
+    @Override
+    public void initialize() {
         system.runLaunch();
         system.runIntake(false);
     }
-
     @Override
     public boolean isFinished() {
         return false;
