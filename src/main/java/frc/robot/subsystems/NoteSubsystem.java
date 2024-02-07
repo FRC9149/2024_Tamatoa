@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.units.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -70,6 +71,13 @@ public class NoteSubsystem extends SubsystemBase {
     public void stopAll() {
         stopIntake();
         stopAngle();
+    }
+    /** set the Angle Motor braking to either true of false.
+     * 
+     * @param isBrake if true: the motor will enter braking
+     */
+    public void setAngleBrake(boolean isBrake) {
+        AngleMotor.setIdleMode(isBrake ? IdleMode.kBrake : IdleMode.kCoast);
     }
 
     /** Returns the angle of the Intake arm since zero'd

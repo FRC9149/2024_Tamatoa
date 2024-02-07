@@ -14,20 +14,24 @@ public class NoteTransfer extends Command{
     /** Command to move the Intake Arm to the desired position for launching and picking up notes
      * 
      * @param corgi The NoteSubsystem object (corgi is an inside joke)
-     * @param flip if true: the arm will travel to the shooter, else the ground for intake
+     * @param flip If true: the arm will travel to the shooter, else the ground for intake
      */
     public NoteTransfer(NoteSubsystem corgi, boolean flip) {
         system = corgi;
         desiredAngle = flip ? 104 : 0;
+        //set braking on for the launcher as it'll fall otherwise
+        system.setAngleBrake(flip ? true : false);
     }
     /** Command to move the Intake Arm to the desired position for launching and picking up notes
      * 
      * @param corgi The NoteSubsystem object (corgi is an inside joke)
      * @param desiredAngle Angle the intake arm should travel to
+     * @param braking Will braking be turned on or off
      */
-    public NoteTransfer(NoteSubsystem corgi, double desiredAngle) {
+    public NoteTransfer(NoteSubsystem corgi, double desiredAngle, boolean braking) {
         system = corgi;
         this.desiredAngle = desiredAngle;
+        system.setAngleBrake(braking);
     }
 
     @Override

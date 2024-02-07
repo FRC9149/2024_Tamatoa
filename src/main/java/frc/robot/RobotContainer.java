@@ -113,9 +113,10 @@ public class RobotContainer
  
     new JoystickButton(driverXbox, ControllerButtons.menu).onTrue((new InstantCommand(drivebase::zeroGyro)));
     new JoystickButton(driverXbox, ControllerButtons.bButton).whileTrue(
-        Commands.deferredProxy(() -> drivebase.driveToPose(
-                                   new Pose2d(new Translation2d(0, 0), Rotation2d.fromDegrees(0)))
-                              ));
+      Commands.deferredProxy(() -> drivebase.driveToPose(
+        new Pose2d(new Translation2d(0, 0), Rotation2d.fromDegrees(0)))
+      )
+    );
     new JoystickButton(driverXbox, ControllerButtons.aButton).whileTrue(
       Commands.deferredProxy(() -> drivebase.driveCommand(
         () -> 0, () -> 1,
@@ -123,10 +124,9 @@ public class RobotContainer
       ))
     );
 
-    // Intake and launcher commands
-    new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl).unless(()->{return !driverXbox.getLeftBumper();}));
-    new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl).unless(()->{return !driverXbox.getRightBumper();}));
-    // arm movement commands
+
+    new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl));
+    new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl));
     //new JoystickButton(driverXbox, ControllerButtons.yButton).whileTrue(new NoteTransfer(noteControl, true));
     //new JoystickButton(driverXbox, ControllerButtons.xButton).whileTrue(new NoteTransfer(noteControl, false));
   }
