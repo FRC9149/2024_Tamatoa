@@ -123,9 +123,10 @@ public class RobotContainer
       ))
     );
 
-
+    // Intake and launcher commands
     new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl).unless(()->{return !driverXbox.getLeftBumper();}));
     new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl).unless(()->{return !driverXbox.getRightBumper();}));
+    // arm movement commands
     //new JoystickButton(driverXbox, ControllerButtons.yButton).whileTrue(new NoteTransfer(noteControl, true));
     //new JoystickButton(driverXbox, ControllerButtons.xButton).whileTrue(new NoteTransfer(noteControl, false));
   }
