@@ -67,8 +67,9 @@ public class RobotContainer
     noteControl.zeroAngle();
 
     //drivebase.setupPathPlanner();
-    NamedCommands.registerCommand("intakeDown", new NoteTransfer(noteControl, true));
-    NamedCommands.registerCommand("intakeUp", new NoteTransfer(noteControl, false));
+    NamedCommands.registerCommand("IntakeDown", new NoteTransfer(noteControl, true).withTimeout(1.25));
+    NamedCommands.registerCommand("IntakeUp", new NoteTransfer(noteControl, false).withTimeout(1.25));
+    NamedCommands.registerCommand("LaunchNote", new OutakeControl(noteControl).withTimeout(0.75));
 
     drivebase.setupPathPlanner();
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -133,8 +134,8 @@ public class RobotContainer
  
     new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl));
     new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl));
-    new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, false));
-    new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, true));
+    new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, false).withTimeout(1.25));
+    new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, true).withTimeout(1.25));
   }
 
   /**
