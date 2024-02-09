@@ -5,6 +5,7 @@
 package frc.robot.subsystems.swervedrive;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -77,8 +78,6 @@ public class SwerveSubsystem extends SubsystemBase
       throw new RuntimeException(e);
     }
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
-
-    setupPathPlanner();
   }
 
   /**
@@ -137,15 +136,16 @@ public class SwerveSubsystem extends SubsystemBase
   public Command getAutonomousCommand(String pathName, boolean setOdomToStart)
   {
     // Load the path you want to follow using its name in the GUI
-    PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+    //PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
     if (setOdomToStart)
     {
-      resetOdometry(new Pose2d(path.getPoint(0).position, getHeading()));
+      //resetOdometry(new Pose2d(path.getPoint(0).position, getHeading()));
     }
 
     // Create a path following command using AutoBuilder. This will also trigger event markers.
-    return AutoBuilder.followPath(path);
+    //return AutoBuilder.followPath(path);
+    return new PathPlannerAuto(pathName);
   }
 
   /**

@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.event.BooleanEvent;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -35,6 +37,10 @@ import frc.robot.subsystems.VisionSubsystem;
 import java.io.File;
 import java.lang.management.OperatingSystemMXBean;
 
+import com.fasterxml.jackson.core.sym.Name;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
  * little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
@@ -45,18 +51,29 @@ public class RobotContainer
 
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
-  private final NoteSubsystem noteControl = new NoteSubsystem(false, true, false, false);
+  private final NoteSubsystem noteControl = new NoteSubsystem(false, true, false, true);
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   CommandJoystick driverController = new CommandJoystick(1);
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
+  
+  private SendableChooser<Command> autoChooser;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // Configure the trigger bindings
+    noteControl.zeroAngle();
+
+    //drivebase.setupPathPlanner();
+    NamedCommands.registerCommand("intakeDown", new NoteTransfer(noteControl, true));
+    NamedCommands.registerCommand("intakeUp", new NoteTransfer(noteControl, false));
+
+    drivebase.setupPathPlanner();
+    autoChooser = AutoBuilder.buildAutoChooser();
+
+    // Configure the trigger bindingsP
     configureBindings();
 
     AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
@@ -93,10 +110,10 @@ public class RobotContainer
         () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
         () -> driverXbox.getRawAxis(2));
 
-    /*Command driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
+    Command driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
         () -> MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> driverXbox.getRawAxis(2));*/
+        () -> driverXbox.getRawAxis(2));
 
     drivebase.setDefaultCommand( driveFieldOrientedDirectAngle );
   }
@@ -111,23 +128,13 @@ public class RobotContainer
   private void configureBindings()
   {
  
-    new JoystickButton(driverXbox, ControllerButtons.menu).onTrue((new InstantCommand(drivebase::zeroGyro)));
-    new JoystickButton(driverXbox, ControllerButtons.bButton).whileTrue(
-      Commands.deferredProxy(() -> drivebase.driveToPose(
-        new Pose2d(new Translation2d(0, 0), Rotation2d.fromDegrees(0)))
-      )
-    );
-    new JoystickButton(driverXbox, ControllerButtons.aButton).whileTrue(
-      Commands.deferredProxy(() -> drivebase.driveCommand(
-        () -> 0, () -> 1,
-        () -> 0, () -> 0
-      ))
-    );
-
+    new JoystickButton(driverXbox, ControllerButtons.menu).onTrue(new InstantCommand(drivebase::zeroGyro));
+    new JoystickButton(driverXbox, ControllerButtons.capture).onTrue(drivebase.driveToPose(new Pose2d(0, 0, new Rotation2d(0))).until(()->driverXbox.getPOV()==0));
+ 
     new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl));
     new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl));
-    new JoystickButton(driverXbox, ControllerButtons.yButton).whileTrue(new NoteTransfer(noteControl, true));
-    new JoystickButton(driverXbox, ControllerButtons.xButton).whileTrue(new NoteTransfer(noteControl, false));
+    new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, false));
+    new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, true));
   }
 
   /**
@@ -138,7 +145,7 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("New Path", true);
+    return drivebase.getAutonomousCommand("New Auto", true);
   }
 
   public void setDriveMode()

@@ -16,8 +16,8 @@ public class NoteSubsystem extends SubsystemBase {
     private static final CANSparkMax IntakeMotor = new CANSparkMax(9, MotorType.kBrushless);
     private static final CANSparkMax AngleMotor = new CANSparkMax(10, MotorType.kBrushless);
     private static final CANSparkMax[] launchMotors = new CANSparkMax[]{
-        new CANSparkMax(20, MotorType.kBrushless),
-        new CANSparkMax(30, MotorType.kBrushless)
+        new CANSparkMax(11, MotorType.kBrushless),
+        new CANSparkMax(12, MotorType.kBrushless)
     };
 
     private static final DutyCycleEncoder AngleEncoder = new DutyCycleEncoder(0);
@@ -52,7 +52,7 @@ public class NoteSubsystem extends SubsystemBase {
     *   @param speed A number betwwen 1 and -1.
     */
     public void runAngle(double speed) {
-        if(speed <=1 && speed >= -1) AngleMotor.set(speed);
+        AngleMotor.set(speed/25);
     }
     /** Stops the motor that moves the intake arm */
     public void stopAngle() {
@@ -97,19 +97,11 @@ public class NoteSubsystem extends SubsystemBase {
     public double getAngleDeg() {
         return AngleEncoder.isConnected() ? AngleEncoder.getDistance() : -1;
     }
-    /**
-     * @return double (Position of encoder)
-     */
-    public double getAnglePosition() {
-        return AngleEncoder.isConnected() ? AngleEncoder.getAbsolutePosition() : -1;
-    }
 
     @Override
     public void periodic() {
         if(AngleEncoder.isConnected()){
-            SmartDashboard.putNumber("AngleEncoder get", AngleEncoder.get());
-            SmartDashboard.putNumber("AngleEncoder position", AngleEncoder.getAbsolutePosition() - AngleEncoder.getPositionOffset());
-            SmartDashboard.putNumber("AngleEncoder distance", AngleEncoder.getDistance());
+            SmartDashboard.putNumber("AngleEncoder Deg", getAngleDeg());
         }
     }
 }
