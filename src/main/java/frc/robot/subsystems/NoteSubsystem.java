@@ -49,10 +49,10 @@ public class NoteSubsystem extends SubsystemBase {
         IntakeMotor.set(0);
     }
     /** Runs the motor to move the intake from the ground to outake.
-    *   @param speed A number betwwen 1 and -1.
+    *   @param speed A double between -1 & 1 to set the speed in percentage; limited to 100%.
     */
     public void runAngle(double speed) {
-        AngleMotor.set(speed/25);
+        AngleMotor.set(speed > 1 ? 1 : speed < -1 ? -1 : speed);
     }
     /** Stops the motor that moves the intake arm */
     public void stopAngle() {
