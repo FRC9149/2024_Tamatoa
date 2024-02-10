@@ -133,7 +133,7 @@ public class RobotContainer
     new JoystickButton(driverXbox, ControllerButtons.capture).onTrue(drivebase.driveToPose(new Pose2d(0, 0, new Rotation2d(0))).until(()->driverXbox.getPOV()==0));
  
     new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl));
-    new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl));
+    new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl).withTimeout(1.5));
     new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, false).withTimeout(1.25));
     new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, true).withTimeout(1.25));
   }

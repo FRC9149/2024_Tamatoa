@@ -25,8 +25,12 @@ public class NoteTransfer extends Command{
         desiredAngle = flip ? -200 : 0;
     }
     @Override
+    public void initialize() {
+        system.runAngle(desiredAngle == 0 ? -0.5 : 0.5);
+    }
+    @Override
     public void execute(){
-        system.runAngle( -pid.calculate(system.getAngleDeg(), desiredAngle));
+        //system.runAngle( -pid.calculate(system.getAngleDeg(), desiredAngle) / 50);
         SmartDashboard.putNumber("Angle Pid SetPoint", pid.getSetpoint());
     }
     @Override

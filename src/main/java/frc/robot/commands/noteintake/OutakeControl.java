@@ -5,16 +5,22 @@ import frc.robot.subsystems.NoteSubsystem;
 
 public class OutakeControl extends Command{
     private NoteSubsystem system;
+    private boolean runAlone = false;
 
     public OutakeControl(NoteSubsystem NoteSubsystemObj) {
         system = NoteSubsystemObj;
         addRequirements(system);
     }
+    public OutakeControl(NoteSubsystem NoteSubsystemObj, boolean runAlone) {
+        system = NoteSubsystemObj;
+        addRequirements(system);
+        this.runAlone = runAlone;
+    }
 
     @Override
     public void initialize() {
         system.runLaunch();
-        system.runIntake(false);
+        if(!runAlone) system.runIntake(false);
     }
     @Override
     public boolean isFinished() {
