@@ -2,27 +2,15 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.0,
-      "y": 7.0
+      "x": 1.9229831326995024,
+      "y": 5.515804013063089
     },
-    "rotation": -90.0
+    "rotation": 180.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
-        {
-          "type": "path",
-          "data": {
-            "pathName": "toSpeaker tl"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
-          }
-        },
         {
           "type": "named",
           "data": {
@@ -42,7 +30,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
               {
@@ -54,7 +42,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "runIntake"
+                  "name": "RunIntake"
                 }
               }
             ]

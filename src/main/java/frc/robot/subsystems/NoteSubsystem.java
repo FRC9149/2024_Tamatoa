@@ -54,7 +54,7 @@ public class NoteSubsystem extends SubsystemBase {
     public void runAngle(double speed) {
         AngleMotor.set(speed > 1 ? 1 : speed < -1 ? -1 : speed);
     }
-    /** Stops the motor that moves the intake arm */
+    /** Stops the motor that moves the intake arm */ 
     public void stopAngle() {
         AngleMotor.set(0);
     }
