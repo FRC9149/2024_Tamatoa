@@ -76,6 +76,7 @@ public class NoteSubsystem extends SubsystemBase {
     public void stopAll() {
         stopIntake();
         stopAngle();
+        stopLaunch();
     }
     /** set the Angle Motor braking to either true of false.
      * 
