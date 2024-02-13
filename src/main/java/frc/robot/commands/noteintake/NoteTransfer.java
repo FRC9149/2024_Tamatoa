@@ -35,7 +35,7 @@ public class NoteTransfer extends Command{
     }
     @Override
     public boolean isFinished() {
-        return desiredAngle == -200 ? system.getAngleDeg() <= -195 : system.getAngleDeg() >= -5;
+        return desiredAngle == 0 ? system.getAngleDeg() >= -5 : system.getAngleDeg() <= -(Math.abs(desiredAngle) - 5);
     }
     @Override
     public void end(boolean interuppted) {

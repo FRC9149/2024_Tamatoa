@@ -21,6 +21,7 @@ public class NoteSubsystem extends SubsystemBase {
     };
 
     private static final DutyCycleEncoder AngleEncoder = new DutyCycleEncoder(0);
+    private static final int AngleEncoderOffset = 0;
 
     /** A subsystem used to control the position of notes via motors.
      * 
@@ -89,13 +90,13 @@ public class NoteSubsystem extends SubsystemBase {
      * @returns double (Angle in Radians)
      */
     public double getAngleRad() {
-        return AngleEncoder.isConnected() ? AngleEncoder.getDistance() * (Math.PI / 180) : -1;
+        return AngleEncoder.isConnected() ? getAngleDeg() * (Math.PI / 180) : -1;
     }
     /** Returns the angle of the Intake arm since zero'd
      * @returns double (Angle in Degrees)
      */
     public double getAngleDeg() {
-        return AngleEncoder.isConnected() ? AngleEncoder.getDistance() : -1;
+        return AngleEncoder.isConnected() ? AngleEncoder.getDistance() - AngleEncoderOffset: -1;
     }
 
     @Override
