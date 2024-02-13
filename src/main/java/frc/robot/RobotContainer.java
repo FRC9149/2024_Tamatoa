@@ -46,8 +46,7 @@ import com.pathplanner.lib.auto.NamedCommands;
  * little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
  * Instead, the structure of the robot (including subsystems, commands, and trigger mappings) should be declared here.
  */
-public class RobotContainer
-{
+public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
@@ -64,8 +63,6 @@ public class RobotContainer
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    noteControl.zeroAngle();
-
     //drivebase.setupPathPlanner();
     NamedCommands.registerCommand("IntakeDown", new NoteTransfer(noteControl, true).withTimeout(1.25));
     NamedCommands.registerCommand("IntakeUp", new NoteTransfer(noteControl, false).withTimeout(1.25));
@@ -78,16 +75,16 @@ public class RobotContainer
     configureBindings();
 
     AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
-                                                                   () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                                OperatorConstants.LEFT_Y_DEADBAND),
-                                                                   () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                                OperatorConstants.LEFT_X_DEADBAND),
-                                                                   () -> MathUtil.applyDeadband(driverXbox.getRightX(),
-                                                                                                OperatorConstants.RIGHT_X_DEADBAND),
-                                                                   driverXbox::getYButtonPressed,
-                                                                   driverXbox::getAButtonPressed,
-                                                                   driverXbox::getXButtonPressed,
-                                                                   driverXbox::getBButtonPressed);
+      () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
+        OperatorConstants.LEFT_Y_DEADBAND),
+      () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
+        OperatorConstants.LEFT_X_DEADBAND),
+      () -> MathUtil.applyDeadband(driverXbox.getRightX(),
+        OperatorConstants.RIGHT_X_DEADBAND),
+      driverXbox::getYButtonPressed,
+      driverXbox::getAButtonPressed,
+      driverXbox::getXButtonPressed,
+      driverXbox::getBButtonPressed);
 
     // Applies deadbands and inverts controls because joysticks
     // are back-right positive while robot
@@ -136,6 +133,11 @@ public class RobotContainer
     new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl).withTimeout(1.5));
     new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, false).withTimeout(1.25));
     new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, true).withTimeout(1.25));
+
+    new Trigger(()->{return driverXbox.getPOV()==90;}).onTrue(Commands.deferredProxy(()->{
+      noteControl.zeroAngle();
+      return new EmptyCommand();
+    }));
   }
 
   /**

@@ -36,7 +36,6 @@ public class NoteSubsystem extends SubsystemBase {
         launchMotors[0].setInverted(isLauncherReversed);
         launchMotors[1].setInverted(!isLauncherReversed);
         AngleEncoder.setDistancePerRotation(360);//set distance to be the current angle in degrees
-        zeroAngle();
     }
     /** Runs the motor to intake the notes
      * @param isIntake If set to true, the motor will intake a note
