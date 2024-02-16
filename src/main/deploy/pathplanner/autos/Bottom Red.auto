@@ -1,0 +1,31 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 16.09474218948903,
+      "y": 1.9832555049757343
+    },
+    "rotation": -179.99999999985775
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Leave Bottom Red"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Return Bottom Red"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Red",
+  "choreoAuto": false
+}

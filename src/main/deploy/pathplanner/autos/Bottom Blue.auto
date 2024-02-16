@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.0,
-      "y": 7.0
+      "x": 2,
+      "y": 2
     },
     "rotation": 0
   },
@@ -14,12 +14,18 @@
         {
           "type": "path",
           "data": {
-            "pathName": "test"
+            "pathName": "leave bottom blue"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Return Bottom Blue"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Blue",
   "choreoAuto": false
 }

@@ -22,7 +22,8 @@ public class NoteTransfer extends Command{
     public NoteTransfer(NoteSubsystem corgi, boolean flip) {
         system = corgi;
         addRequirements(system);
-        desiredAngle = flip ? -200 : 0;
+        desiredAngle = flip ? -190 : 0;
+        system.setAngleBrake(flip);
     }
     @Override
     public void initialize() {
@@ -35,7 +36,7 @@ public class NoteTransfer extends Command{
     }
     @Override
     public boolean isFinished() {
-        return desiredAngle == 0 ? system.getAngleDeg() >= -5 : system.getAngleDeg() <= -(Math.abs(desiredAngle) - 5);
+        return desiredAngle == 0 ? system.getAngleDeg() >= -2 : system.getAngleDeg() <= -Math.abs((desiredAngle) - 2);
     }
     @Override
     public void end(boolean interuppted) {

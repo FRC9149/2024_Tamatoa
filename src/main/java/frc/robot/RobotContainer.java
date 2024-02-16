@@ -1,7 +1,7 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-//hi
+
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.proto.Controller;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -66,6 +67,7 @@ public class RobotContainer {
     //drivebase.setupPathPlanner();
     NamedCommands.registerCommand("IntakeDown", new NoteTransfer(noteControl, true).withTimeout(1.25));
     NamedCommands.registerCommand("IntakeUp", new NoteTransfer(noteControl, false).withTimeout(1.25));
+    NamedCommands.registerCommand("RunIntake", new IntakeControl(noteControl));
     NamedCommands.registerCommand("LaunchNote", new OutakeControl(noteControl).withTimeout(0.75));
 
     drivebase.setupPathPlanner();
@@ -123,21 +125,17 @@ public class RobotContainer {
    * {@link CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4}
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
    */
-  private void configureBindings()
-  {
- 
-    new JoystickButton(driverXbox, ControllerButtons.menu).onTrue(new InstantCommand(drivebase::zeroGyro));
-    new JoystickButton(driverXbox, ControllerButtons.capture).onTrue(drivebase.driveToPose(new Pose2d(0, 0, new Rotation2d(0))).until(()->driverXbox.getPOV()==0));
+  private void configureBindings() {
+    new JoystickButton(driverXbox, ControllerButtons.menu).onTrue( new InstantCommand(drivebase::zeroGyro) );
+    new JoystickButton(driverXbox, ControllerButtons.capture).onTrue( new InstantCommand(noteControl::removeAngleBrake) );
  
     new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl));
-    new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl).withTimeout(1.5));
-    new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, false).withTimeout(1.25));
-    new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, true).withTimeout(1.25));
+    new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl));
+    new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, false));
+    new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, true));
 
-    new Trigger(()->{return driverXbox.getPOV()==90;}).onTrue(Commands.deferredProxy(()->{
-      noteControl.zeroAngle();
-      return new EmptyCommand();
-    }));
+    new Trigger(()->{ return driverXbox.getPOV() == 0;
+    }).whileTrue(new IntakeControl(noteControl, false));
   }
 
   /**
@@ -145,19 +143,16 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand()
-  {
+  public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("New Auto", true);
+    return drivebase.getAutonomousCommand("Auto Test", true);
   }
 
-  public void setDriveMode()
-  {
+  public void setDriveMode() {
     //drivebase.setDefaultCommand();
   }
 
-  public void setMotorBrake(boolean brake)
-  {
+  public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
   }
 }

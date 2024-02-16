@@ -21,7 +21,7 @@ public class NoteSubsystem extends SubsystemBase {
     };
 
     private static final DutyCycleEncoder AngleEncoder = new DutyCycleEncoder(0);
-    private static final int AngleEncoderOffset = 0;
+    private static final double AngleEncoderOffset = 289.287187;
 
     /** A subsystem used to control the position of notes via motors.
      * 
@@ -84,6 +84,9 @@ public class NoteSubsystem extends SubsystemBase {
      */
     public void setAngleBrake(boolean isBrake) {
         AngleMotor.setIdleMode(isBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    }
+    public void removeAngleBrake(){
+        AngleMotor.setIdleMode(IdleMode.kCoast);
     }
 
     /** Returns the angle of the Intake arm since zero'd
