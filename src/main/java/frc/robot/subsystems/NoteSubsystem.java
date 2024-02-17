@@ -23,38 +23,37 @@ public class NoteSubsystem extends SubsystemBase {
     private static final DutyCycleEncoder AngleEncoder = new DutyCycleEncoder(0);
     private static final double AngleEncoderOffset = 289.287187;
 
-    /** A subsystem used to control the position of notes via motors.
+    /**A subsystem used to control the position of notes via motors.
      * 
      * @param isIntakeReversed Is the motor that pulls in notes reversed?
      * @param isAngleReversed Is the motor that moves the intake arm reversed?
      * @param isLauncherReversed Are the motors that shoot the note reversed?
-     * @param isEncoderReversed Is the Encoder that reads the rotation of the IntakeArm reversed?
      * @author El Campus
      */
-    public NoteSubsystem(boolean isIntakeReversed, boolean isAngleReversed, boolean isLauncherReversed, boolean isEncoderReversed) {
+    public NoteSubsystem(boolean isIntakeReversed, boolean isAngleReversed, boolean isLauncherReversed) {
         IntakeMotor.setInverted(isIntakeReversed);
         AngleMotor.setInverted(isAngleReversed);
         launchMotors[0].setInverted(isLauncherReversed);
         launchMotors[1].setInverted(!isLauncherReversed);
         AngleEncoder.setDistancePerRotation(360);//set distance to be the current angle in degrees
     }
-    /** Runs the motor to intake the notes
+    /**Runs the motor to intake the notes
      * @param isIntake If set to true, the motor will intake a note
      */
     public void runIntake(boolean isIntake) {
         IntakeMotor.set(isIntake ? 1 : -1);
     }
-    /** Stops the motor that intakes notes*/
+    /**Stops the motor that intakes notes*/
     public void stopIntake() {
         IntakeMotor.set(0);
     }
-    /** Runs the motor to move the intake from the ground to outake.
+    /**Runs the motor to move the intake from the ground to outake.
     *   @param speed A double between -1 & 1 to set the speed in percentage; limited to 100%.
     */
     public void runAngle(double speed) {
         AngleMotor.set(speed > 1 ? 1 : speed < -1 ? -1 : speed);
     }
-    /** Stops the motor that moves the intake arm */ 
+    /**Stops the motor that moves the intake arm */ 
     public void stopAngle() {
         AngleMotor.set(0);
     }
@@ -62,40 +61,38 @@ public class NoteSubsystem extends SubsystemBase {
     public void zeroAngle() {
         AngleEncoder.reset();
     }
-    /** Shoot a note out of the launcher */
+    /**Shoot a note out of the launcher */
     public void runLaunch() {
         launchMotors[0].set(1);
         launchMotors[1].set(1);
     }
-    /** Stop the motors that run the launcher */
+    /**Stop the motors that run the launcher */
     public void stopLaunch() {
         launchMotors[0].set(0);
         launchMotors[1].set(0);
     }
-    /** Stops all the motors in the subsystem*/
+    /**Stops all the motors in the subsystem*/
     public void stopAll() {
         stopIntake();
         stopAngle();
         stopLaunch();
     }
-    /** set the Angle Motor braking to either true of false.
-     * 
-     * @param isBrake if true: the motor will enter braking
-     */
-    public void setAngleBrake(boolean isBrake) {
-        AngleMotor.setIdleMode(isBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    /**Apply motor braking to the intake arm*/
+    public void addAngleBrake() {
+        AngleMotor.setIdleMode(IdleMode.kBrake);
     }
+    /**Set braking mode to coast for the intake arm*/
     public void removeAngleBrake(){
         AngleMotor.setIdleMode(IdleMode.kCoast);
     }
 
-    /** Returns the angle of the Intake arm since zero'd
+    /**Returns the angle of the Intake arm since zero'd
      * @returns double (Angle in Radians)
      */
     public double getAngleRad() {
         return AngleEncoder.isConnected() ? getAngleDeg() * (Math.PI / 180) : -1;
     }
-    /** Returns the angle of the Intake arm since zero'd
+    /**Returns the angle of the Intake arm since zero'd
      * @returns double (Angle in Degrees)
      */
     public double getAngleDeg() {

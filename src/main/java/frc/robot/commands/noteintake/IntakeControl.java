@@ -23,7 +23,6 @@ public class IntakeControl extends Command {
    public void initialize() {
       system.runIntake(isIntake);
    }
-
    @Override
    public boolean isFinished() {
       return false;

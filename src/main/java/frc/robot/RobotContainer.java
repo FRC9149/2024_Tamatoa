@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,10 +38,12 @@ import frc.robot.subsystems.VisionSubsystem;
 
 import java.io.File;
 import java.lang.management.OperatingSystemMXBean;
+import java.sql.Driver;
 
 import com.fasterxml.jackson.core.sym.Name;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -49,14 +52,11 @@ import com.pathplanner.lib.auto.NamedCommands;
  */
 public class RobotContainer {
 
-  // The robot's subsystems and commands are defined here...
+  // The robot's subsystems and controller are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
-  private final NoteSubsystem noteControl = new NoteSubsystem(false, true, false, true);
-  // CommandJoystick rotationController = new CommandJoystick(1);
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  CommandJoystick driverController = new CommandJoystick(1);
-  // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
-  XboxController driverXbox = new XboxController(0);
+  private final NoteSubsystem noteControl = new NoteSubsystem(false, true, false);
+
+  private final XboxController driverXbox = new XboxController(0);
   
   private SendableChooser<Command> autoChooser;
 
@@ -64,7 +64,6 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    //drivebase.setupPathPlanner();
     NamedCommands.registerCommand("IntakeDown", new NoteTransfer(noteControl, true).withTimeout(1.25));
     NamedCommands.registerCommand("IntakeUp", new NoteTransfer(noteControl, false).withTimeout(1.25));
     NamedCommands.registerCommand("RunIntake", new IntakeControl(noteControl));
@@ -134,8 +133,15 @@ public class RobotContainer {
     new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, false));
     new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, true));
 
+    new JoystickButton(driverXbox, ControllerButtons.aButton).whileTrue(AutoBuilder.followPath( PathPlannerPath.fromPathFile(
+      DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() == Alliance.Red ? "Back up Red" : "Back up Blue" : ""
+    )));
+    new JoystickButton(driverXbox, ControllerButtons.bButton).whileTrue(AutoBuilder.followPath( PathPlannerPath.fromPathFile(
+      DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() == Alliance.Red ? "Source Blue" : "Source Red" : ""
+    )));
+
     new Trigger(()->{ return driverXbox.getPOV() == 0;
-    }).whileTrue(new IntakeControl(noteControl, false));
+      }).whileTrue(new IntakeControl(noteControl, false));
   }
 
   /**
