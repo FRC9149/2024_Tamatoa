@@ -143,7 +143,7 @@ public class RobotContainer {
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
    */
   private void configureBindings() {
-    driverXbox.x().onTrue(new InstantCommand(drivebase::zeroGyro));
+    if(!oneController.getSelected()) driverXbox.x().onTrue(new InstantCommand(drivebase::zeroGyro));
     // waypoint buttons
 
     if(oneController.getSelected()) {
@@ -154,12 +154,12 @@ public class RobotContainer {
       opXbox.pov(180).onTrue(new InstantCommand(noteControl::removeAngleBrake));
       opXbox.pov(0).whileTrue(new IntakeControl(noteControl, false));
     } else {
-      opXbox.rightBumper().whileTrue(new IntakeControl(noteControl));
-      opXbox.leftBumper().whileTrue(new OutakeControl(noteControl));
-      opXbox.y().onTrue(new NoteTransfer(noteControl, false));
-      opXbox.x().onTrue(new NoteTransfer(noteControl, true));
-      opXbox.pov(180).onTrue(new InstantCommand(noteControl::removeAngleBrake));
-      opXbox.pov(0).whileTrue(new IntakeControl(noteControl, false));
+      driverXbox.rightBumper().whileTrue(new IntakeControl(noteControl));
+      driverXbox.leftBumper().whileTrue(new OutakeControl(noteControl));
+      driverXbox.y().onTrue(new NoteTransfer(noteControl, false));
+      driverXbox.x().onTrue(new NoteTransfer(noteControl, true));
+      driverXbox.pov(180).onTrue(new InstantCommand(noteControl::removeAngleBrake));
+      driverXbox.pov(0).whileTrue(new IntakeControl(noteControl, false));
     }
   }
 
