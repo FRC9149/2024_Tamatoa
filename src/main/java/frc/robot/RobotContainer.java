@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,6 +41,7 @@ import frc.robot.subsystems.VisionSubsystem;
 import java.io.File;
 import java.lang.management.OperatingSystemMXBean;
 import java.sql.Driver;
+import java.sql.Driver;
 
 import com.fasterxml.jackson.core.sym.Name;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -55,7 +57,7 @@ import com.pathplanner.lib.path.PathPlannerTrajectory;
  */
 public class RobotContainer {
 
-  // The robot's subsystems and commands are defined here...
+  // The robot's subsystems and controller are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
   private final NoteSubsystem noteControl = new NoteSubsystem(false, true, false, true);
   // CommandJoystick rotationController = new CommandJoystick(1);
@@ -72,7 +74,6 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    //drivebase.setupPathPlanner();
     NamedCommands.registerCommand("IntakeDown", new NoteTransfer(noteControl, true).withTimeout(1.25));
     NamedCommands.registerCommand("IntakeUp", new NoteTransfer(noteControl, false).withTimeout(1.25));
     NamedCommands.registerCommand("RunIntake", new IntakeControl(noteControl));
