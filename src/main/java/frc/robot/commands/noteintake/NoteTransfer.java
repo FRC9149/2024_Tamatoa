@@ -23,7 +23,8 @@ public class NoteTransfer extends Command{
         system = corgi;
         addRequirements(system);
         desiredAngle = flip ? -190 : 0;
-        system.setAngleBrake(flip);
+        if(flip) system.addAngleBrake();
+            else system.removeAngleBrake();
     }
     @Override
     public void initialize() {
@@ -32,11 +33,11 @@ public class NoteTransfer extends Command{
     @Override
     public void execute(){
         //system.runAngle( -pid.calculate(system.getAngleDeg(), desiredAngle) / 50);
-        SmartDashboard.putNumber("Angle Pid SetPoint", pid.getSetpoint());
+        //SmartDashboard.putNumber("Angle Pid SetPoint", pid.getSetpoint());
     }
     @Override
     public boolean isFinished() {
-        return desiredAngle == 0 ? system.getAngleDeg() >= -2 : system.getAngleDeg() <= -Math.abs((desiredAngle) - 2);
+        return desiredAngle == 0 ? system.getAngleDeg() >= -2 : system.getAngleDeg() <= -(Math.abs(desiredAngle) - 2);
     }
     @Override
     public void end(boolean interuppted) {

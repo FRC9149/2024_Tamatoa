@@ -78,13 +78,11 @@ public class NoteSubsystem extends SubsystemBase {
         stopAngle();
         stopLaunch();
     }
-    /** set the Angle Motor braking to either true of false.
-     * 
-     * @param isBrake if true: the motor will enter braking
-     */
-    public void setAngleBrake(boolean isBrake) {
-        AngleMotor.setIdleMode(isBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    /**set brakng to false for the arm motor*/
+    public void addAngleBrake() {
+        AngleMotor.setIdleMode(IdleMode.kBrake);
     }
+    /**set braking to true for the arm motor*/
     public void removeAngleBrake(){
         AngleMotor.setIdleMode(IdleMode.kCoast);
     }
@@ -102,10 +100,10 @@ public class NoteSubsystem extends SubsystemBase {
         return AngleEncoder.isConnected() ? AngleEncoder.getDistance() - AngleEncoderOffset: -1;
     }
 
-    @Override
-    public void periodic() {
-        if(AngleEncoder.isConnected()){
-            SmartDashboard.putNumber("AngleEncoder Deg", getAngleDeg());
-        }
-    }
+    //@Override
+    //public void periodic() {
+    //    if(AngleEncoder.isConnected()){
+    //        SmartDashboard.putNumber("AngleEncoder Deg", getAngleDeg());
+    //    }
+    //}
 }

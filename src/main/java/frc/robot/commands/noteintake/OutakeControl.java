@@ -5,7 +5,7 @@ import frc.robot.subsystems.NoteSubsystem;
 
 public class OutakeControl extends Command{
     private NoteSubsystem system;
-    private double ticks, tick = 0.05;
+    private double ticks, tick = 0.03;
 
     public OutakeControl(NoteSubsystem NoteSubsystemObj) {
         system = NoteSubsystemObj;

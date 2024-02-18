@@ -14,8 +14,10 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -37,10 +39,14 @@ import frc.robot.subsystems.VisionSubsystem;
 
 import java.io.File;
 import java.lang.management.OperatingSystemMXBean;
+import java.sql.Driver;
 
 import com.fasterxml.jackson.core.sym.Name;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPlannerTrajectory;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -56,9 +62,11 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   CommandJoystick driverController = new CommandJoystick(1);
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
-  XboxController driverXbox = new XboxController(0);
+  CommandXboxController driverXbox = new CommandXboxController(0);
+  CommandXboxController opXbox = new CommandXboxController(1);
   
   private SendableChooser<Command> autoChooser;
+  private SendableChooser<Boolean> oneController;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -68,14 +76,22 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeDown", new NoteTransfer(noteControl, true).withTimeout(1.25));
     NamedCommands.registerCommand("IntakeUp", new NoteTransfer(noteControl, false).withTimeout(1.25));
     NamedCommands.registerCommand("RunIntake", new IntakeControl(noteControl));
-    NamedCommands.registerCommand("LaunchNote", new OutakeControl(noteControl).withTimeout(0.75));
+    NamedCommands.registerCommand("LaunchNote", new OutakeControl(noteControl).withTimeout(1.25));
 
     drivebase.setupPathPlanner();
     autoChooser = AutoBuilder.buildAutoChooser();
+    
+    autoChooser.addOption("Middle Blue", AutoBuilder.buildAuto("Middle Blue"));
+    autoChooser.addOption("Middle Red", AutoBuilder.buildAuto("Middle Red"));
+    autoChooser.addOption("Bottom Blue", AutoBuilder.buildAuto("Bottom Blue"));
+    autoChooser.addOption("Bottom Red", AutoBuilder.buildAuto("Bottom Red"));
+    autoChooser.addOption("Auto Test", AutoBuilder.buildAuto("Auto Test"));
+    autoChooser.setDefaultOption("None", new EmptyCommand());
+    SmartDashboard.putData(autoChooser);
 
     // Configure the trigger bindingsP
     configureBindings();
-
+/*
     AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
       () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
         OperatorConstants.LEFT_Y_DEADBAND),
@@ -86,7 +102,7 @@ public class RobotContainer {
       driverXbox::getYButtonPressed,
       driverXbox::getAButtonPressed,
       driverXbox::getXButtonPressed,
-      driverXbox::getBButtonPressed);
+      driverXbox::getBButtonPressed);*/
 
     // Applies deadbands and inverts controls because joysticks
     // are back-right positive while robot
@@ -126,16 +142,24 @@ public class RobotContainer {
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
    */
   private void configureBindings() {
-    new JoystickButton(driverXbox, ControllerButtons.menu).onTrue( new InstantCommand(drivebase::zeroGyro) );
-    new JoystickButton(driverXbox, ControllerButtons.capture).onTrue( new InstantCommand(noteControl::removeAngleBrake) );
- 
-    new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl));
-    new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl));
-    new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, false));
-    new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, true));
+    driverXbox.x().onTrue(new InstantCommand(drivebase::zeroGyro));
+    // waypoint buttons
 
-    new Trigger(()->{ return driverXbox.getPOV() == 0;
-    }).whileTrue(new IntakeControl(noteControl, false));
+    if(oneController.getSelected()) {
+      opXbox.rightBumper().whileTrue(new IntakeControl(noteControl));
+      opXbox.leftBumper().whileTrue(new OutakeControl(noteControl));
+      opXbox.y().onTrue(new NoteTransfer(noteControl, false));
+      opXbox.x().onTrue(new NoteTransfer(noteControl, true));
+      opXbox.pov(180).onTrue(new InstantCommand(noteControl::removeAngleBrake));
+      opXbox.pov(0).whileTrue(new IntakeControl(noteControl, false));
+    } else {
+      opXbox.rightBumper().whileTrue(new IntakeControl(noteControl));
+      opXbox.leftBumper().whileTrue(new OutakeControl(noteControl));
+      opXbox.y().onTrue(new NoteTransfer(noteControl, false));
+      opXbox.x().onTrue(new NoteTransfer(noteControl, true));
+      opXbox.pov(180).onTrue(new InstantCommand(noteControl::removeAngleBrake));
+      opXbox.pov(0).whileTrue(new IntakeControl(noteControl, false));
+    }
   }
 
   /**
@@ -145,7 +169,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("Auto Test", true);
+    return autoChooser.getSelected();
   }
 
   public void setDriveMode() {

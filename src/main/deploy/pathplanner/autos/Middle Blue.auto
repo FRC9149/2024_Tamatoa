@@ -12,18 +12,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "Back up Blue"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "LaunchNote"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "IntakeDown"
@@ -55,7 +43,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Back up Blue"
+                  "pathName": "Home Blue"
                 }
               },
               {

@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.swervedrive;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathConstraints;
@@ -22,8 +24,13 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.EmptyCommand;
+
 import java.io.File;
 import java.util.function.DoubleSupplier;
+
+import org.json.simple.JSONObject;
+
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
@@ -138,14 +145,14 @@ public class SwerveSubsystem extends SubsystemBase
     // Load the path you want to follow using its name in the GUI
     //PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
-    if (setOdomToStart)
-    {
-      //resetOdometry(new Pose2d(path.getPoint(0).position, getHeading()));
+    if (setOdomToStart) {
+     //resetOdometry(new Pose2d(path.getPoint(0).position, getHeading()));
     }
 
     // Create a path following command using AutoBuilder. This will also trigger event markers.
-    //return AutoBuilder.followPath(path);
-    return new PathPlannerAuto(pathName);
+    //return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
+    //return AutoBuilder.
+    return new EmptyCommand();
   }
 
   /**
