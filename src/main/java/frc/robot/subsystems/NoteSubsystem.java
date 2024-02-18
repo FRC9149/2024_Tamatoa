@@ -77,19 +77,11 @@ public class NoteSubsystem extends SubsystemBase {
         stopAngle();
         stopLaunch();
     }
-<<<<<<< HEAD
-    /**set brakng to false for the arm motor*/
-    public void addAngleBrake() {
-        AngleMotor.setIdleMode(IdleMode.kBrake);
-    }
-    /**set braking to true for the arm motor*/
-=======
     /**Apply motor braking to the intake arm*/
     public void addAngleBrake() {
         AngleMotor.setIdleMode(IdleMode.kBrake);
     }
     /**Set braking mode to coast for the intake arm*/
->>>>>>> 6bf1c733d6a1609455254aac1d9210c7a61ee00e
     public void removeAngleBrake(){
         AngleMotor.setIdleMode(IdleMode.kCoast);
     }

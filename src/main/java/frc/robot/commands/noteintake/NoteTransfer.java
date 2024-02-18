@@ -24,13 +24,8 @@ public class NoteTransfer extends Command {
         system = corgi;
         addRequirements(system);
         desiredAngle = flip ? -190 : 0;
-<<<<<<< HEAD
-        if(flip) system.addAngleBrake();
-            else system.removeAngleBrake();
-=======
         resetArm = flip && system.getAngleDeg() <= -(Math.abs(desiredAngle) - 2);
         if(flip) system.addAngleBrake(); else system.removeAngleBrake();
->>>>>>> 6bf1c733d6a1609455254aac1d9210c7a61ee00e
     }
     @Override
     public void initialize() {
@@ -44,12 +39,8 @@ public class NoteTransfer extends Command {
     }
     @Override
     public boolean isFinished() {
-<<<<<<< HEAD
-        return desiredAngle == 0 ? system.getAngleDeg() >= -2 : system.getAngleDeg() <= -(Math.abs(desiredAngle) - 2);
-=======
         if(resetArm) return system.getAngleDeg() >= -(Math.abs(desiredAngle) - 2);
             else return desiredAngle == 0 ? system.getAngleDeg() >= -2 : system.getAngleDeg() <= -Math.abs((desiredAngle) - 2);
->>>>>>> 6bf1c733d6a1609455254aac1d9210c7a61ee00e
     }
     @Override
     public void end(boolean interuppted) {

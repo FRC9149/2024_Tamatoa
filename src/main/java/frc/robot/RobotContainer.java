@@ -47,6 +47,7 @@ import com.fasterxml.jackson.core.sym.Name;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 
@@ -59,13 +60,13 @@ public class RobotContainer {
 
   // The robot's subsystems and controller are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
-  private final NoteSubsystem noteControl = new NoteSubsystem(false, true, false, true);
+  private final NoteSubsystem noteControl = new NoteSubsystem(false, true, false);
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   CommandJoystick driverController = new CommandJoystick(1);
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
-  CommandXboxController driverXbox = new CommandXboxController(0);
-  CommandXboxController opXbox = new CommandXboxController(1);
+  XboxController driverXbox = new XboxController(0);
+  XboxController opXbox = new XboxController(1);
   
   private SendableChooser<Command> autoChooser;
   private SendableChooser<Boolean> oneController;
@@ -82,12 +83,12 @@ public class RobotContainer {
     drivebase.setupPathPlanner();
     autoChooser = AutoBuilder.buildAutoChooser();
     
-    autoChooser.addOption("Middle Blue", AutoBuilder.buildAuto("Middle Blue"));
+    /*autoChooser.addOption("Middle Blue", AutoBuilder.buildAuto("Middle Blue"));
     autoChooser.addOption("Middle Red", AutoBuilder.buildAuto("Middle Red"));
     autoChooser.addOption("Bottom Blue", AutoBuilder.buildAuto("Bottom Blue"));
     autoChooser.addOption("Bottom Red", AutoBuilder.buildAuto("Bottom Red"));
     autoChooser.addOption("Auto Test", AutoBuilder.buildAuto("Auto Test"));
-    autoChooser.setDefaultOption("None", new EmptyCommand());
+    autoChooser.setDefaultOption("None", new EmptyCommand());*/
     SmartDashboard.putData(autoChooser);
 
     // Configure the trigger bindingsP
@@ -143,23 +144,35 @@ public class RobotContainer {
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
    */
   private void configureBindings() {
-    if(!oneController.getSelected()) driverXbox.x().onTrue(new InstantCommand(drivebase::zeroGyro));
-    // waypoint buttons
+    new JoystickButton(driverXbox, ControllerButtons.menu).onTrue(new InstantCommand(drivebase::zeroGyro));
+    new JoystickButton(driverXbox, ControllerButtons.aButton).whileTrue(AutoBuilder.pathfindThenFollowPath(
+      PathPlannerPath.fromPathFile(DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get()==Alliance.Red ? "Home Red" : "Home Blue" : ""), 
+      new PathConstraints(2, 2, 540, 720)
+    ));
+    new JoystickButton(driverXbox, ControllerButtons.bButton).whileTrue(AutoBuilder.pathfindThenFollowPath(
+      PathPlannerPath.fromPathFile(DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get()==Alliance.Red ? "Source Blue" : "Source Red" : ""),
+      new PathConstraints(2, 2, 540, 720)
+    ));
 
     if(oneController.getSelected()) {
-      opXbox.rightBumper().whileTrue(new IntakeControl(noteControl));
-      opXbox.leftBumper().whileTrue(new OutakeControl(noteControl));
-      opXbox.y().onTrue(new NoteTransfer(noteControl, false));
-      opXbox.x().onTrue(new NoteTransfer(noteControl, true));
-      opXbox.pov(180).onTrue(new InstantCommand(noteControl::removeAngleBrake));
-      opXbox.pov(0).whileTrue(new IntakeControl(noteControl, false));
+      new JoystickButton(driverXbox, ControllerButtons.capture).onTrue(new InstantCommand(noteControl::removeAngleBrake));
+      
+      new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, false));
+      new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, true));
+
+      new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl));
+      new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl));
+
+      new Trigger(()->{return driverXbox.getPOV()==0;}).whileTrue(new IntakeControl(noteControl, false));
     } else {
-      driverXbox.rightBumper().whileTrue(new IntakeControl(noteControl));
-      driverXbox.leftBumper().whileTrue(new OutakeControl(noteControl));
-      driverXbox.y().onTrue(new NoteTransfer(noteControl, false));
-      driverXbox.x().onTrue(new NoteTransfer(noteControl, true));
-      driverXbox.pov(180).onTrue(new InstantCommand(noteControl::removeAngleBrake));
-      driverXbox.pov(0).whileTrue(new IntakeControl(noteControl, false));
+      new JoystickButton(opXbox, ControllerButtons.aButton).whileTrue(new IntakeControl(noteControl, false));
+      new JoystickButton(opXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl));
+      new JoystickButton(opXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl));
+
+      new JoystickButton(opXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, false));
+      new JoystickButton(opXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, true));
+
+      new JoystickButton(opXbox, ControllerButtons.menu).onTrue(new InstantCommand(noteControl::removeAngleBrake));
     }
   }
 
