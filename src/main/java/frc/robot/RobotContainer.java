@@ -61,6 +61,7 @@ public class RobotContainer {
   // The robot's subsystems and controller are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
   private final NoteSubsystem noteControl = new NoteSubsystem(false, true, false);
+  private final VisionSubsystem vision = new VisionSubsystem();
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   CommandJoystick driverController = new CommandJoystick(1);
@@ -154,25 +155,23 @@ public class RobotContainer {
       new PathConstraints(2, 2, 540, 720)
     ));
 
+    new JoystickButton(oneController.getSelected() ? driverXbox : opXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl));
+    new JoystickButton(oneController.getSelected() ? driverXbox : opXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl));
+
+    new JoystickButton(oneController.getSelected() ? driverXbox : opXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, false));
+    new JoystickButton(oneController.getSelected() ? driverXbox : opXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, true));
+
+    new JoystickButton(oneController.getSelected() ? driverXbox : opXbox, ControllerButtons.capture).onTrue(new InstantCommand(noteControl::removeAngleBrake));
+    new Trigger(()->{return driverXbox.getPOV()==0;}).whileTrue(Commands.deferredProxy(()->{
+      Pose2d movement = vision.PickUpNote();
+      if(movement != null) drivebase.drive(movement.getTranslation(), movement.getRotation().getDegrees(), false);
+      return new EmptyCommand();
+    }));
+
     if(oneController.getSelected()) {
-      new JoystickButton(driverXbox, ControllerButtons.capture).onTrue(new InstantCommand(noteControl::removeAngleBrake));
-      
-      new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, false));
-      new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, true));
-
-      new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl));
-      new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl));
-
-      new Trigger(()->{return driverXbox.getPOV()==0;}).whileTrue(new IntakeControl(noteControl, false));
-    } else {
+      new Trigger(()->{return driverXbox.getPOV()==180;}).whileTrue(new IntakeControl(noteControl, false));
+    }else { 
       new JoystickButton(opXbox, ControllerButtons.aButton).whileTrue(new IntakeControl(noteControl, false));
-      new JoystickButton(opXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl));
-      new JoystickButton(opXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl));
-
-      new JoystickButton(opXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, false));
-      new JoystickButton(opXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, true));
-
-      new JoystickButton(opXbox, ControllerButtons.menu).onTrue(new InstantCommand(noteControl::removeAngleBrake));
     }
   }
 

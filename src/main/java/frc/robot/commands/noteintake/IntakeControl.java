@@ -7,30 +7,30 @@ import frc.robot.subsystems.NoteSubsystem;
 
 public class IntakeControl extends Command {
 
-   private NoteSubsystem system;
-   private boolean isIntake = true;
+  private NoteSubsystem system;
+  private boolean isIntake = true;
 
-   public IntakeControl (NoteSubsystem NoteSubsystemObj) {
-      system = NoteSubsystemObj;
-      addRequirements(system);
-   }
-   public IntakeControl (NoteSubsystem NoteSubsystemObj, boolean isIntake) {
-      system = NoteSubsystemObj;
-      addRequirements(system);
-      this.isIntake = isIntake;
-   }
-   @Override
-   public void initialize() {
-      system.runIntake(isIntake);
-   }
-   @Override
-   public boolean isFinished() {
-      return false;
-   }
-   @Override
-   public void end(boolean interuppted){
-      system.stopIntake();
-   }
+  public IntakeControl (NoteSubsystem NoteSubsystemObj) {
+    system = NoteSubsystemObj;
+    addRequirements(system);
+  }
+  public IntakeControl (NoteSubsystem NoteSubsystemObj, boolean isIntake) {
+    system = NoteSubsystemObj;
+    addRequirements(system);
+    this.isIntake = isIntake;
+  }
+  @Override
+  public void initialize() {
+    system.runIntake(isIntake);
+  }
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
+  @Override
+  public void end(boolean interuppted){
+    system.stopIntake();
+  }
 
 }
     
