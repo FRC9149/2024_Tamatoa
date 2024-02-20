@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.units.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,6 +20,8 @@ public class NoteSubsystem extends SubsystemBase {
     new CANSparkMax(11, MotorType.kBrushless),
     new CANSparkMax(12, MotorType.kBrushless)
   };
+  private static final Servo servoMotor = new Servo(456);
+  private static boolean servoInverted = false;
 
   private static final DutyCycleEncoder AngleEncoder = new DutyCycleEncoder(0);
   private static final double AngleEncoderOffset = 289.287187;
@@ -97,6 +100,18 @@ public class NoteSubsystem extends SubsystemBase {
    */
   public double getAngleDeg() {
     return AngleEncoder.isConnected() ? AngleEncoder.getDistance() - AngleEncoderOffset: -1;
+  }
+  /**
+   * @return The angle that the Servo is at
+   */
+  public double getServoAngle() {
+    return servoMotor.getAngle();
+  }
+  /**Sets the angle that the servo should travel to 
+   * @param angle A number between 0 & 180
+   */
+  public void setServoAngle(double angle) {
+    servoMotor.setAngle(angle);
   }
 
   //@Override
