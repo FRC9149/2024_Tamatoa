@@ -1,6 +1,8 @@
 package frc.robot.commands.noteintake;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.NoteSubsystem;
 
 public class OutakeControl extends Command{
@@ -15,6 +17,7 @@ public class OutakeControl extends Command{
   @Override
   public void initialize() {
     system.runLaunch();
+    RobotContainer.opXbox.setRumble(RumbleType.kBothRumble, 1);
   }
   @Override
   public void execute() {
@@ -29,5 +32,6 @@ public class OutakeControl extends Command{
   public void end(boolean interuppted) {
     ticks = 0;
   	system.stopAll();
+    RobotContainer.opXbox.setRumble(RumbleType.kBothRumble, 0);
   }
 }

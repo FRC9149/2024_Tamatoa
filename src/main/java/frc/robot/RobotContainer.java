@@ -15,8 +15,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -66,36 +68,23 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   CommandJoystick driverController = new CommandJoystick(1);
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
-  XboxController driverXbox = new XboxController(0);
-  XboxController opXbox = new XboxController(1);
+  public static final XboxController driverXbox = new XboxController(0);
+  public static final XboxController opXbox = new XboxController(1);
   
   private SendableChooser<Command> autoChooser;
-  //private SendableChooser<Boolean> oneController;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    NamedCommands.registerCommand("IntakeDown", new NoteTransfer(noteControl, true).withTimeout(1.25));
-    NamedCommands.registerCommand("IntakeUp", new NoteTransfer(noteControl, false).withTimeout(1.25));
+    NamedCommands.registerCommand("IntakeDown", new NoteTransfer(noteControl, true).withTimeout(1));
+    NamedCommands.registerCommand("IntakeUp", new NoteTransfer(noteControl, false).withTimeout(1));
     NamedCommands.registerCommand("RunIntake", new IntakeControl(noteControl));
-    NamedCommands.registerCommand("LaunchNote", new OutakeControl(noteControl).withTimeout(1.25));
+    NamedCommands.registerCommand("LaunchNote", new OutakeControl(noteControl).withTimeout(1));
 
     drivebase.setupPathPlanner();
     autoChooser = AutoBuilder.buildAutoChooser();
-
-    //oneController.addOption("One Controller", true);
-    //oneController.addOption("Two Controllers", false);
-    
-    /*autoChooser.addOption("Middle Blue", AutoBuilder.buildAuto("Middle Blue"));
-    autoChooser.addOption("Middle Red", AutoBuilder.buildAuto("Middle Red"));
-    autoChooser.addOption("Bottom Blue", AutoBuilder.buildAuto("Bottom Blue"));
-    autoChooser.addOption("Bottom Red", AutoBuilder.buildAuto("Bottom Red"));
-    autoChooser.addOption("Auto Test", AutoBuilder.buildAuto("Auto Test"));
-    autoChooser.setDefaultOption("None", new EmptyCommand());*/
     SmartDashboard.putData(autoChooser);
-    //SmartDashboard.putData(oneController);
-
     // Configure the trigger bindingsP
     configureBindings();
 /*
@@ -150,34 +139,31 @@ public class RobotContainer {
    */
   private void configureBindings() {
     new JoystickButton(driverXbox, ControllerButtons.menu).onTrue(new InstantCommand(drivebase::zeroGyro));
-    
-    //issues with the json path files for source red and source blue 
+    new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new OutakeControl(noteControl)); // Optional
 
-    //new JoystickButton(driverXbox, ControllerButtons.aButton).whileTrue(AutoBuilder.pathfindThenFollowPath(
-    //  PathPlannerPath.fromPathFile(DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get()==Alliance.Red ? "Home Red" : "Home Blue" : ""), 
-    //  new PathConstraints(2, 2, 540, 720)
-    //));
-    //new JoystickButton(driverXbox, ControllerButtons.bButton).whileTrue(AutoBuilder.pathfindThenFollowPath(
-    //  PathPlannerPath.fromPathFile(DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get()==Alliance.Red ? "Source Blue" : "Source Red" : ""),
-    //  new PathConstraints(2, 2, 540, 720)
-    //));
+    new JoystickButton(driverXbox, ControllerButtons.aButton).whileTrue(AutoBuilder.pathfindThenFollowPath(
+      PathPlannerPath.fromPathFile(DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get()==Alliance.Red ? "Home Red" : "Home Blue" : ""), 
+      new PathConstraints(2, 2, 540, 720)
+    ));
 
-    new JoystickButton(opXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl));
-    new JoystickButton(opXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl));
+    new Trigger(()->{return driverXbox.getPOV()==9;}).whileTrue(Commands.deferredProxy(()->{
+      driverXbox.setRumble(RumbleType.kBothRumble, 1);
+      Pose2d movement = vision.PickUpNote();
+      if(movement != null) drivebase.drive(movement.getTranslation(), movement.getRotation().getDegrees(), false);
+      return new EmptyCommand();
+    }).andThen(Commands.deferredProxy(()->{
+      driverXbox.setRumble(RumbleType.kBothRumble, 0);
+      return new EmptyCommand();
+    })));
+
+    new JoystickButton(opXbox, ControllerButtons.lbButton).whileTrue(new IntakeControl(noteControl));
+    new JoystickButton(opXbox, ControllerButtons.rbButton).whileTrue(new OutakeControl(noteControl));
 
     new JoystickButton(opXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, false));
     new JoystickButton(opXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, true));
 
     new JoystickButton(opXbox, ControllerButtons.capture).onTrue(new InstantCommand(noteControl::removeAngleBrake));
-    new Trigger(()->{return driverXbox.getPOV()==0;}).whileTrue(Commands.deferredProxy(()->{
-      Pose2d movement = vision.PickUpNote();
-      if(movement != null) drivebase.drive(movement.getTranslation(), movement.getRotation().getDegrees(), false);
-      return new EmptyCommand();
-    }));
-      new JoystickButton(opXbox, ControllerButtons.aButton).whileTrue(new IntakeControl(noteControl, false));
-
-    //new JoystickButton(driverXbox, ControllerButtons.aButton).whileTrue(new IntakeControl(noteControl));
-    //new JoystickButton(opXbox, ControllerButtons.aButton).whileTrue(new IntakeControl(noteControl, false));
+    new JoystickButton(opXbox, ControllerButtons.aButton).whileTrue(new IntakeControl(noteControl, false));
   }
 
   /**
