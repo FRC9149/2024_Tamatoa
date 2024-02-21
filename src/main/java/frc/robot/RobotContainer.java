@@ -31,14 +31,18 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ControllerButtons;
 import frc.robot.commands.EmptyCommand;
-import frc.robot.commands.noteintake.IntakeControl;
-import frc.robot.commands.noteintake.NoteTransfer;
-import frc.robot.commands.noteintake.OutakeControl;
+import frc.robot.commands.noteCommands.IntakeControl;
+import frc.robot.commands.noteCommands.NoteTransfer;
+import frc.robot.commands.noteCommands.OutakeControl;
+import frc.robot.commands.noteCommands.ampControl;
+import frc.robot.commands.noteCommands.runServo;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.subsystems.NoteSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.noteSubsystems.AmpMotor;
+import frc.robot.subsystems.noteSubsystems.IntakeArm;
+import frc.robot.subsystems.noteSubsystems.NoteSubsystem;
 
 import java.io.File;
 import java.lang.management.OperatingSystemMXBean;
@@ -60,14 +64,14 @@ import com.pathplanner.lib.path.PathPlannerTrajectory;
  */
 public class RobotContainer {
 
-  // The robot's subsystems and controller are defined here...
+  // The robot's subsystems and controllers are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
-  private final NoteSubsystem noteControl = new NoteSubsystem(false, true, false);
   private final VisionSubsystem vision = new VisionSubsystem();
-  // CommandJoystick rotationController = new CommandJoystick(1);
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  CommandJoystick driverController = new CommandJoystick(1);
-  // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
+
+  private final NoteSubsystem noteControl = new NoteSubsystem(false, false);
+  private final AmpMotor ampMotor = new AmpMotor(false);
+  private final IntakeArm intakeArm = new IntakeArm(true);
+  
   public static final XboxController driverXbox = new XboxController(0);
   public static final XboxController opXbox = new XboxController(1);
   
@@ -77,28 +81,15 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    NamedCommands.registerCommand("IntakeDown", new NoteTransfer(noteControl, true).withTimeout(1));
-    NamedCommands.registerCommand("IntakeUp", new NoteTransfer(noteControl, false).withTimeout(1));
+    NamedCommands.registerCommand("IntakeDown", new NoteTransfer(intakeArm, true).withTimeout(1));
+    NamedCommands.registerCommand("IntakeUp", new NoteTransfer(intakeArm, false).withTimeout(1));
     NamedCommands.registerCommand("RunIntake", new IntakeControl(noteControl));
     NamedCommands.registerCommand("LaunchNote", new OutakeControl(noteControl).withTimeout(1));
 
     drivebase.setupPathPlanner();
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData(autoChooser);
-    // Configure the trigger bindingsP
     configureBindings();
-/*
-    AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
-      () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
-        OperatorConstants.LEFT_Y_DEADBAND),
-      () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
-        OperatorConstants.LEFT_X_DEADBAND),
-      () -> MathUtil.applyDeadband(driverXbox.getRightX(),
-        OperatorConstants.RIGHT_X_DEADBAND),
-      driverXbox::getYButtonPressed,
-      driverXbox::getAButtonPressed,
-      driverXbox::getXButtonPressed,
-      driverXbox::getBButtonPressed);*/
 
     // Applies deadbands and inverts controls because joysticks
     // are back-right positive while robot
@@ -111,22 +102,6 @@ public class RobotContainer {
         () -> MathUtil.applyDeadband(-driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
         () -> MathUtil.applyDeadband(-driverXbox.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)
     );
-
-    // Applies deadbands and inverts controls because joysticks
-    // are back-right positive while robot
-    // controls are front-left positive
-    // left stick controls translation
-    // right stick controls the angular velocity of the robot
-    Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> driverXbox.getRawAxis(2));
-
-    Command driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
-        () -> MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> driverXbox.getRawAxis(2));
-
     drivebase.setDefaultCommand( driveFieldOrientedDirectAngle );
   }
 
@@ -139,7 +114,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     new JoystickButton(driverXbox, ControllerButtons.menu).onTrue(new InstantCommand(drivebase::zeroGyro));
-    new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new OutakeControl(noteControl)); // Optional
+    new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl)); // Optional
 
     new JoystickButton(driverXbox, ControllerButtons.aButton).whileTrue(AutoBuilder.pathfindThenFollowPath(
       PathPlannerPath.fromPathFile(DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get()==Alliance.Red ? "Home Red" : "Home Blue" : ""), 
@@ -156,16 +131,19 @@ public class RobotContainer {
       return new EmptyCommand();
     })));
 
-    new JoystickButton(opXbox, ControllerButtons.lbButton).whileTrue(new IntakeControl(noteControl));
-    new JoystickButton(opXbox, ControllerButtons.rbButton).whileTrue(new OutakeControl(noteControl));
+    new JoystickButton(opXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl));
+    new JoystickButton(opXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl));
 
-    new JoystickButton(opXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(noteControl, false));
-    new JoystickButton(opXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(noteControl, true));
+    new JoystickButton(opXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(intakeArm, false));
+    new JoystickButton(opXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(intakeArm, true));
 
-    new JoystickButton(opXbox, ControllerButtons.capture).onTrue(new InstantCommand(noteControl::removeAngleBrake));
-    new JoystickButton(opXbox, ControllerButtons.aButton).whileTrue(new IntakeControl(noteControl, false));
+    new JoystickButton(opXbox, ControllerButtons.capture).onTrue(new InstantCommand(intakeArm::removeBrake));
+    new JoystickButton(opXbox, ControllerButtons.bButton).whileTrue(new IntakeControl(noteControl, false));
+    new JoystickButton(opXbox, ControllerButtons.aButton).whileTrue(new ampControl(ampMotor));
+
+    new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new runServo(noteControl, 180));
+    new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue(new runServo(noteControl, 0));
   }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

@@ -1,4 +1,4 @@
-package frc.robot.commands.noteintake;
+package frc.robot.commands.noteCommands;
 
 import java.util.function.DoubleSupplier;
 
@@ -7,35 +7,27 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.NoteSubsystem;
+import frc.robot.subsystems.noteSubsystems.IntakeArm;
 
 public class NoteTransfer extends Command {
-
-  //private final PIDController pid = new PIDController(0.1, 0, 0);
-  private NoteSubsystem system;
+  private IntakeArm system;
   private double desiredAngle;
-
 
   /** Command to move the Intake Arm to the desired position for launching and picking up notes
    * 
-   * @param corgi The NoteSubsystem object (corgi is an inside joke)
+   * @param corgi The IntakeArm object (corgi is an inside joke)
    * @param flip If true: the arm will travel to the ground, else the launcher for shooting
    */
-  public NoteTransfer(NoteSubsystem corgi, boolean flip) {
+  public NoteTransfer(IntakeArm corgi, boolean flip) {
     system = corgi;
     addRequirements(system);
     desiredAngle = flip ? -190 : 0;
-    if(flip) system.addAngleBrake(); else system.removeAngleBrake();
+    if(flip) system.addBrake(); else system.removeBrake();
   }
   @Override
   public void initialize() {
-    system.runAngle(desiredAngle == 0 ? -0.5 : 0.5);
+    system.run(desiredAngle == 0 ? -0.5 : 0.5);
     RobotContainer.opXbox.setRumble(desiredAngle == 0 ? RumbleType.kRightRumble : RumbleType.kLeftRumble , 1);
-  }
-  @Override
-  public void execute(){
-    //system.runAngle( -pid.calculate(system.getAngleDeg(), desiredAngle) / 50);
-    //SmartDashboard.putNumber("Angle Pid SetPoint", pid.getSetpoint());
   }
   @Override
   public boolean isFinished() {
@@ -43,8 +35,7 @@ public class NoteTransfer extends Command {
   }
   @Override
   public void end(boolean interuppted) {
-    system.stopAngle();
+    system.stop();
     RobotContainer.opXbox.setRumble(RumbleType.kBothRumble, 0);
-    //pid.close();
   }
 }
