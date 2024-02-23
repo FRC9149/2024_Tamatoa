@@ -4,26 +4,23 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.noteSubsystems.NoteSubsystem;
+import frc.robot.subsystems.noteSubsystems.IntakeMotor;
+import frc.robot.subsystems.noteSubsystems.ServoMotor;
 
 
 public class IntakeControl extends Command {
 
-  private NoteSubsystem system;
+  private IntakeMotor system;
   private boolean isIntake = true;
 
-  public IntakeControl (NoteSubsystem NoteSubsystemObj) {
-    system = NoteSubsystemObj;
-    addRequirements(system);
-  }
-  public IntakeControl (NoteSubsystem NoteSubsystemObj, boolean isIntake) {
-    system = NoteSubsystemObj;
+  public IntakeControl (IntakeMotor IntakeSubsystem, boolean isIntake) {
+    system = IntakeSubsystem;
     addRequirements(system);
     this.isIntake = isIntake;
   }
   @Override
   public void initialize() {
-    system.runIntake(isIntake);
+    system.run(isIntake);
     RobotContainer.opXbox.setRumble(RumbleType.kBothRumble, 1);
   }
   @Override
@@ -32,7 +29,7 @@ public class IntakeControl extends Command {
   }
   @Override
   public void end(boolean interuppted){
-    system.stopIntake();
+    system.stop();
     RobotContainer.opXbox.setRumble(RumbleType.kBothRumble, 0);
   }
 

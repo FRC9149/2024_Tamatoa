@@ -25,8 +25,11 @@ public final class Constants
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
 
   public static final class MotorConstants {
-    public static final int IntakeArmMotorPort = 10;
-    public static final int AmpMotorPort = 13;
+    public static final int servoPort = 9;
+    public static final int IntakePort = 9;
+    public static final int IntakeArmPort = 10;
+    public static final int[] LauncherPorts = {11, 12}; 
+    public static final int AmpPort = 13;
   }
 
   public static final class ControllerButtons {

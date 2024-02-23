@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorConstants;
 
 public class IntakeArm extends SubsystemBase {
-  private static final CANSparkMax motor = new CANSparkMax(MotorConstants.IntakeArmMotorPort, MotorType.kBrushless);
+  private static final CANSparkMax motor = new CANSparkMax(MotorConstants.IntakeArmPort, MotorType.kBrushless);
 
   private static final DutyCycleEncoder AngleEncoder = new DutyCycleEncoder(0);
   private static final double AngleEncoderOffset = 289.287187;

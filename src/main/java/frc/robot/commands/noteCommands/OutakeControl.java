@@ -3,26 +3,31 @@ package frc.robot.commands.noteCommands;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.noteSubsystems.NoteSubsystem;
+import frc.robot.subsystems.noteSubsystems.IntakeMotor;
+import frc.robot.subsystems.noteSubsystems.LaunchingMotors;
+import frc.robot.subsystems.noteSubsystems.ServoMotor;
 
 public class OutakeControl extends Command{
-  private NoteSubsystem system;
+  private LaunchingMotors launchSystem;
+  private IntakeMotor intakeSystem;
   private double ticks, tick = 0.03;
 
-  public OutakeControl(NoteSubsystem NoteSubsystemObj) {
-    system = NoteSubsystemObj;
-    addRequirements(system);
+  public OutakeControl(LaunchingMotors LauncherSubsystem, IntakeMotor IntakeSubsystem) {
+    launchSystem = LauncherSubsystem;
+    intakeSystem = IntakeSubsystem;
+    addRequirements(launchSystem);
+    addRequirements(IntakeSubsystem);
   }
 
   @Override
   public void initialize() {
-    system.runLaunch();
+    launchSystem.run();
     RobotContainer.opXbox.setRumble(RumbleType.kBothRumble, 1);
   }
   @Override
   public void execute() {
     ticks += tick;
-    if(ticks >= 1) system.runIntake(false);
+    if(ticks >= 1) intakeSystem.run(false);
   }
   @Override
   public boolean isFinished() {
@@ -31,7 +36,7 @@ public class OutakeControl extends Command{
   @Override
   public void end(boolean interuppted) {
     ticks = 0;
-  	system.stopAll();
+  	launchSystem.stop();
     RobotContainer.opXbox.setRumble(RumbleType.kBothRumble, 0);
   }
 }

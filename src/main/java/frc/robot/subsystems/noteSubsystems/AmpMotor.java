@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorConstants;
 
 public class AmpMotor extends SubsystemBase {
-    private static final CANSparkMax motor = new CANSparkMax(MotorConstants.AmpMotorPort, MotorType.kBrushed);
+    private static final CANSparkMax motor = new CANSparkMax(MotorConstants.AmpPort, MotorType.kBrushed);
     private static final RelativeEncoder encoder = motor.getEncoder();
 
     public AmpMotor(boolean isReversed) {

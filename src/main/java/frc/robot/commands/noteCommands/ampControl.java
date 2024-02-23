@@ -7,11 +7,11 @@ import frc.robot.subsystems.noteSubsystems.AmpMotor;
 public class ampControl extends Command {
   AmpMotor system;
   /**Run the motor to push a note into the amp
-   * @param AmpMotorObj The subsystem that runs the Amp motor
+   * @param AmpMotorSubsystem The subsystem that runs the Amp motor
    * @param targetTime How long to run the motor for. If set to a negative number, the motor will reverse backwards.
    */
-  public ampControl(AmpMotor AmpMotorObj) {
-    system = AmpMotorObj;
+  public ampControl(AmpMotor AmpMotorSubsystem) {
+    system = AmpMotorSubsystem;
     addRequirements(system);
   }
 

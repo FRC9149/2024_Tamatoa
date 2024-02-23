@@ -42,7 +42,9 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.noteSubsystems.AmpMotor;
 import frc.robot.subsystems.noteSubsystems.IntakeArm;
-import frc.robot.subsystems.noteSubsystems.NoteSubsystem;
+import frc.robot.subsystems.noteSubsystems.IntakeMotor;
+import frc.robot.subsystems.noteSubsystems.LaunchingMotors;
+import frc.robot.subsystems.noteSubsystems.ServoMotor;
 
 import java.io.File;
 import java.lang.management.OperatingSystemMXBean;
@@ -68,7 +70,9 @@ public class RobotContainer {
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
   private final VisionSubsystem vision = new VisionSubsystem();
 
-  private final NoteSubsystem noteControl = new NoteSubsystem(false, false);
+  private final ServoMotor noteControl = new ServoMotor();
+  private final IntakeMotor intake = new IntakeMotor(false);
+  private final LaunchingMotors launcher = new LaunchingMotors(false);
   private final AmpMotor ampMotor = new AmpMotor(false);
   private final IntakeArm intakeArm = new IntakeArm(true);
   
@@ -83,8 +87,8 @@ public class RobotContainer {
   public RobotContainer() {
     NamedCommands.registerCommand("IntakeDown", new NoteTransfer(intakeArm, true).withTimeout(1));
     NamedCommands.registerCommand("IntakeUp", new NoteTransfer(intakeArm, false).withTimeout(1));
-    NamedCommands.registerCommand("RunIntake", new IntakeControl(noteControl));
-    NamedCommands.registerCommand("LaunchNote", new OutakeControl(noteControl).withTimeout(1));
+    NamedCommands.registerCommand("RunIntake", new IntakeControl(intake, true));
+    NamedCommands.registerCommand("LaunchNote", new OutakeControl(launcher, intake).withTimeout(1));
 
     drivebase.setupPathPlanner();
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -114,14 +118,14 @@ public class RobotContainer {
    */
   private void configureBindings() {
     new JoystickButton(driverXbox, ControllerButtons.menu).onTrue(new InstantCommand(drivebase::zeroGyro));
-    new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl)); // Optional
+    new JoystickButton(driverXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(launcher, intake)); // Optional
 
     new JoystickButton(driverXbox, ControllerButtons.aButton).whileTrue(AutoBuilder.pathfindThenFollowPath(
       PathPlannerPath.fromPathFile(DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get()==Alliance.Red ? "Home Red" : "Home Blue" : ""), 
       new PathConstraints(2, 2, 540, 720)
     ));
 
-    new Trigger(()->{return driverXbox.getPOV()==9;}).whileTrue(Commands.deferredProxy(()->{
+    /*new Trigger(()->{return driverXbox.getPOV()==9;}).whileTrue(Commands.deferredProxy(()->{
       driverXbox.setRumble(RumbleType.kBothRumble, 1);
       Pose2d movement = vision.PickUpNote();
       if(movement != null) drivebase.drive(movement.getTranslation(), movement.getRotation().getDegrees(), false);
@@ -129,16 +133,16 @@ public class RobotContainer {
     }).andThen(Commands.deferredProxy(()->{
       driverXbox.setRumble(RumbleType.kBothRumble, 0);
       return new EmptyCommand();
-    })));
+    })));*/
 
-    new JoystickButton(opXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(noteControl));
-    new JoystickButton(opXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(noteControl));
+    new JoystickButton(opXbox, ControllerButtons.rbButton).whileTrue(new IntakeControl(intake, true));
+    new JoystickButton(opXbox, ControllerButtons.lbButton).whileTrue(new OutakeControl(launcher, intake));
 
     new JoystickButton(opXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(intakeArm, false));
     new JoystickButton(opXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(intakeArm, true));
 
     new JoystickButton(opXbox, ControllerButtons.capture).onTrue(new InstantCommand(intakeArm::removeBrake));
-    new JoystickButton(opXbox, ControllerButtons.bButton).whileTrue(new IntakeControl(noteControl, false));
+    new JoystickButton(opXbox, ControllerButtons.bButton).whileTrue(new IntakeControl(intake, false));
     new JoystickButton(opXbox, ControllerButtons.aButton).whileTrue(new ampControl(ampMotor));
 
     new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new runServo(noteControl, 180));
