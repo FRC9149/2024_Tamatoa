@@ -4,10 +4,7 @@
 
 package frc.robot.subsystems.swervedrive;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -30,8 +27,6 @@ import frc.robot.commands.EmptyCommand;
 
 import java.io.File;
 import java.util.function.DoubleSupplier;
-
-import org.json.simple.JSONObject;
 
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;

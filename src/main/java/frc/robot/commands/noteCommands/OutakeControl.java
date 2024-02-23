@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.noteSubsystems.IntakeMotor;
 import frc.robot.subsystems.noteSubsystems.LaunchingMotors;
-import frc.robot.subsystems.noteSubsystems.ServoMotor;
 
 public class OutakeControl extends Command{
   private LaunchingMotors launchSystem;
@@ -31,7 +30,7 @@ public class OutakeControl extends Command{
   }
   @Override
   public boolean isFinished() {
-    return false;
+    return ticks >= 3;
   }
   @Override
   public void end(boolean interuppted) {

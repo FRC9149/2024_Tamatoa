@@ -1,15 +1,11 @@
 package frc.robot.commands.noteCommands;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.noteSubsystems.IntakeMotor;
-import frc.robot.subsystems.noteSubsystems.ServoMotor;
-
 
 public class IntakeControl extends Command {
-
   private IntakeMotor system;
   private boolean isIntake = true;
 

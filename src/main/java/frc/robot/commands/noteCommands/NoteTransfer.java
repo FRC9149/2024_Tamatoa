@@ -1,10 +1,6 @@
 package frc.robot.commands.noteCommands;
 
-import java.util.function.DoubleSupplier;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.noteSubsystems.IntakeArm;

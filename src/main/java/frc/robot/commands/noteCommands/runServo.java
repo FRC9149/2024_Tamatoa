@@ -3,7 +3,7 @@ package frc.robot.commands.noteCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.noteSubsystems.ServoMotor;
 
-public class runServo extends Command{
+public class runServo extends Command {
   ServoMotor system;
   double angle;
 
@@ -18,6 +18,6 @@ public class runServo extends Command{
   }
   @Override
   public boolean isFinished() {
-    return angle == system.getAngle();
+    return system.getAngle() >= angle - 1 && system.getAngle() <= angle + 1;
   }
 }
