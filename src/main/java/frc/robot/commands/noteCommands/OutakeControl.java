@@ -3,6 +3,7 @@ package frc.robot.commands.noteCommands;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.LedStrip;
 import frc.robot.subsystems.noteSubsystems.IntakeMotor;
 import frc.robot.subsystems.noteSubsystems.LaunchingMotors;
 
@@ -11,7 +12,7 @@ public class OutakeControl extends Command{
   private IntakeMotor intakeSystem;
   private double ticks, tick = 0.03;
 
-  public OutakeControl(LaunchingMotors LauncherSubsystem, IntakeMotor IntakeSubsystem) {
+  public OutakeControl(LaunchingMotors LauncherSubsystem, IntakeMotor IntakeSubsystem, LedStrip leds) {
     launchSystem = LauncherSubsystem;
     intakeSystem = IntakeSubsystem;
     addRequirements(launchSystem);
