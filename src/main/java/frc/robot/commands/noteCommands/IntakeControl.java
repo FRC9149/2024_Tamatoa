@@ -3,18 +3,18 @@ package frc.robot.commands.noteCommands;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.LedStrip;
+//import frc.robot.subsystems.LedStrip;
 import frc.robot.subsystems.noteSubsystems.IntakeMotor;
 
 public class IntakeControl extends Command {
   private IntakeMotor system;
-  private LedStrip led;
+  //private LedStrip led;
   private boolean isIntake = true;
 
-  public IntakeControl (IntakeMotor IntakeSubsystem, boolean isIntake, LedStrip leds) {
+  public IntakeControl (IntakeMotor IntakeSubsystem, boolean isIntake/*, LedStrip leds*/) {
     system = IntakeSubsystem;
-    led = leds;
-    addRequirements(system, led);
+    //led = leds;
+    addRequirements(system);
     this.isIntake = isIntake;
   }
   @Override
@@ -24,7 +24,7 @@ public class IntakeControl extends Command {
   }
   @Override
   public void execute() {
-    led.rainbow();
+    //led.rainbow();
   }
   @Override
   public boolean isFinished() {
@@ -33,7 +33,7 @@ public class IntakeControl extends Command {
   @Override
   public void end(boolean interuppted){
     system.stop();
-    led.off();
+    //led.off();
     RobotContainer.opXbox.setRumble(RumbleType.kBothRumble, 0);
   }
 

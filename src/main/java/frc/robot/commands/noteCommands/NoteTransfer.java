@@ -22,12 +22,12 @@ public class NoteTransfer extends Command {
   }
   @Override
   public void initialize() {
-    system.run(desiredAngle == 0 ? -0.5 : 0.5);
+    system.run(desiredAngle == 0 ? 0.5 : -0.5);
     RobotContainer.opXbox.setRumble(desiredAngle == 0 ? RumbleType.kRightRumble : RumbleType.kLeftRumble , 1);
   }
   @Override
   public boolean isFinished() {
-    return desiredAngle == 0 ? system.getAngleDeg() >= -2 : system.getAngleDeg() <= -Math.abs((desiredAngle) - 2);
+    return desiredAngle == 0 ? system.getAngleDeg() >= -2 : system.getAngleDeg() <= -188;
   }
   @Override
   public void end(boolean interuppted) {

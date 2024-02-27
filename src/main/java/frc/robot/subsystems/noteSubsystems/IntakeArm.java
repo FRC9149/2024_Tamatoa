@@ -13,7 +13,7 @@ public class IntakeArm extends SubsystemBase {
   private static final CANSparkMax motor = new CANSparkMax(MotorConstants.IntakeArmPort, MotorType.kBrushless);
 
   private static final DutyCycleEncoder AngleEncoder = new DutyCycleEncoder(0);
-  private static final double AngleEncoderOffset = 289.287187;
+  private static final double AngleEncoderOffset = -13.049427;
 
   public IntakeArm(boolean isReversed) {
     motor.setInverted(isReversed);

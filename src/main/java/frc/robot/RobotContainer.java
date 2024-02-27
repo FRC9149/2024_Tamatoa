@@ -28,7 +28,7 @@ import frc.robot.commands.noteCommands.OutakeControl;
 import frc.robot.commands.noteCommands.ampControl;
 import frc.robot.commands.noteCommands.runServo;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.subsystems.LedStrip;
+//import frc.robot.subsystems.LedStrip;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.noteSubsystems.AmpMotor;
 import frc.robot.subsystems.noteSubsystems.IntakeArm;
@@ -58,10 +58,10 @@ public class RobotContainer {
   private final IntakeMotor intake = new IntakeMotor(false);
   private final LaunchingMotors launcher = new LaunchingMotors(false);
   private final AmpMotor ampMotor = new AmpMotor(false);
-  private final IntakeArm intakeArm = new IntakeArm(true);
+  private final IntakeArm intakeArm = new IntakeArm(false);
 
-  private final LedStrip outakeLedStrip = new LedStrip(8, 0);
-  private final LedStrip mainLEDS = new LedStrip(7, 0);
+  //private final LedStrip outakeLedStrip = new LedStrip(8, 0);
+  //private final LedStrip mainLEDS = new LedStrip(7, 0);
   
   public static final XboxController driverXbox = new XboxController(0);
   public static final XboxController opXbox = new XboxController(1);
@@ -74,8 +74,8 @@ public class RobotContainer {
   public RobotContainer() {
     NamedCommands.registerCommand("IntakeDown", new NoteTransfer(intakeArm, true).withTimeout(1));
     NamedCommands.registerCommand("IntakeUp", new NoteTransfer(intakeArm, false).withTimeout(1));
-    NamedCommands.registerCommand("RunIntake", new IntakeControl(intake, true, mainLEDS));
-    NamedCommands.registerCommand("LaunchNote", new OutakeControl(launcher, intake, outakeLedStrip).withTimeout(1));
+    NamedCommands.registerCommand("RunIntake", new IntakeControl(intake, true));
+    NamedCommands.registerCommand("LaunchNote", new OutakeControl(launcher, intake).withTimeout(1));
 
     drivebase.setupPathPlanner();
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -105,7 +105,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     new JoystickButton(driverXbox, ControllerButtons.menu).onTrue(new InstantCommand(drivebase::zeroGyro));
-    new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new OutakeControl(launcher, intake, outakeLedStrip)); // Optional
+    //new JoystickButton(driverXbox, ControllerButtons.rbButton).whileTrue(new OutakeControl(launcher, intake)); // Optional
 
     new JoystickButton(driverXbox, ControllerButtons.aButton).whileTrue(AutoBuilder.pathfindThenFollowPath(
       PathPlannerPath.fromPathFile(DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get()==Alliance.Red ? "Home Red" : "Home Blue" : ""), 
@@ -123,14 +123,14 @@ public class RobotContainer {
     })));
     
 
-    new JoystickButton(opXbox, ControllerButtons.lbButton).whileTrue(new IntakeControl(intake, true, mainLEDS));
-    new JoystickButton(opXbox, ControllerButtons.rbButton).whileTrue(new OutakeControl(launcher, intake, outakeLedStrip));
+    new JoystickButton(opXbox, ControllerButtons.lbButton).whileTrue(new IntakeControl(intake, true));
+    new JoystickButton(opXbox, ControllerButtons.rbButton).whileTrue(new OutakeControl(launcher, intake));
 
     new JoystickButton(opXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(intakeArm, false));
     new JoystickButton(opXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(intakeArm, true));
 
     new JoystickButton(opXbox, ControllerButtons.capture).onTrue(new InstantCommand(intakeArm::removeBrake));
-    new JoystickButton(opXbox, ControllerButtons.bButton).whileTrue(new IntakeControl(intake, false, mainLEDS));
+    new JoystickButton(opXbox, ControllerButtons.bButton).whileTrue(new IntakeControl(intake, false));
     new JoystickButton(opXbox, ControllerButtons.aButton).whileTrue(new ampControl(ampMotor));
 
     new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new runServo(servo, 180));

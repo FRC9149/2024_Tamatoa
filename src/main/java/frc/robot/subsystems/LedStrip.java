@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+/*
 public class LedStrip extends SubsystemBase {
   private AddressableLED led;
   private AddressableLEDBuffer ledBuffer;
@@ -20,7 +20,7 @@ public class LedStrip extends SubsystemBase {
     led.stop();
   }
 
-  /**To be placed in periodic or execute */
+  /**To be placed in periodic or execute 
   public void rainbow() {
     for(int i = 0; i < ledBuffer.getLength(); i++) {
       double hue = (rainbowPoint + (i * 180 / ledBuffer.getLength())) % 180;
@@ -48,4 +48,4 @@ public class LedStrip extends SubsystemBase {
     led.setData(ledBuffer);
     led.start();
   }
-}
+}*/
