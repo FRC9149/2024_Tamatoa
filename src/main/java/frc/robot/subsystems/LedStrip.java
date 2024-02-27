@@ -17,8 +17,7 @@ public class LedStrip extends SubsystemBase {
   }
 
   public void off() {
-    for(int i = 0; i < ledBuffer.getLength(); i++) ledBuffer.setRGB(i, 0, 0, 0);
-    start();
+    led.stop();
   }
 
   /**To be placed in periodic or execute */
@@ -27,13 +26,13 @@ public class LedStrip extends SubsystemBase {
       double hue = (rainbowPoint + (i * 180 / ledBuffer.getLength())) % 180;
       ledBuffer.setHSV(i, (int)hue, 255, 128);
     }
-    rainbowPoint += 3;
-    rainbowPoint %= 180;
+    rainbowPoint = (rainbowPoint + 3) % 180;
     start();
   }
 
   public void solid(Color color) {
     for(int i = 0; i < ledBuffer.getLength(); i++) ledBuffer.setLED(i, color);
+    start();
   }
 
   public void setRGB(int index, int r, int g, int b) {
