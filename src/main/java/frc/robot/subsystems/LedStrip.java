@@ -40,6 +40,10 @@ public class LedStrip extends SubsystemBase {
     ledBuffer.setRGB(index, r, g, b);
     start();
   }
+  
+  public int length() {
+    return ledBuffer.getLength();
+  }
 
   void start() {
     led.setData(ledBuffer);
