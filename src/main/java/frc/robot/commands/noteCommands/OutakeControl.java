@@ -11,8 +11,9 @@ public class OutakeControl extends Command{
   private LaunchingMotors launchSystem;
   private IntakeMotor intakeSystem;
   //private LedStrip led;
-  private double ticks, tick = 0.03, step;
+  private double ticks, tick = 0.035, step;
   private int currentLED = 0;
+  boolean Slow = false;
 
   public OutakeControl(LaunchingMotors LauncherSubsystem, IntakeMotor IntakeSubsystem /*, LedStrip leds*/) {
     launchSystem = LauncherSubsystem;
@@ -20,6 +21,12 @@ public class OutakeControl extends Command{
     //led = leds;
     //step = 1 / led.length();
     addRequirements(IntakeSubsystem, launchSystem);
+  }
+  public OutakeControl(LaunchingMotors LauncherSubsystem, IntakeMotor IntakeSubsystem, boolean slow) {
+    launchSystem = LauncherSubsystem;
+    intakeSystem = IntakeSubsystem;
+    addRequirements(IntakeSubsystem, launchSystem);
+    Slow = slow;
   }
 
   @Override
@@ -32,7 +39,7 @@ public class OutakeControl extends Command{
     ticks += tick;
     //if(currentLED < led.length()) led.setRGB(currentLED, 255, 255, 255);
     //currentLED = (int)(ticks / step);
-    if(ticks >= 1) intakeSystem.run(false);
+    if(ticks >= 1 || Slow) intakeSystem.run(false);
   }
   @Override
   public boolean isFinished() {

@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.MotorConstants;
@@ -13,7 +14,7 @@ public class IntakeArm extends SubsystemBase {
   private static final CANSparkMax motor = new CANSparkMax(MotorConstants.IntakeArmPort, MotorType.kBrushless);
 
   private static final DutyCycleEncoder AngleEncoder = new DutyCycleEncoder(0);
-  private static final double AngleEncoderOffset = -13.049427;
+  private static final double AngleEncoderOffset = 163;
 
   public IntakeArm(boolean isReversed) {
     motor.setInverted(isReversed);
@@ -38,11 +39,20 @@ public class IntakeArm extends SubsystemBase {
   public void removeBrake(){
     motor.setIdleMode(IdleMode.kCoast);
   }
+  /**Does the intake arm have braking */
+  public void setBraking(Boolean brake) {
+    motor.setIdleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
+  }
   /**Returns the angle of the Intake arm
    * @returns double (Angle in Degrees)
    */
   public double getAngleDeg() {
     return AngleEncoder.isConnected() ? AngleEncoder.getDistance() - AngleEncoderOffset: -1;
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("IntakeEncoder: ", getAngleDeg());
   }
 
 }

@@ -19,6 +19,9 @@ public class IntakeMotor extends SubsystemBase {
   public void run(boolean isIntake) {
     IntakeMotor.set(isIntake ? 1 : -1);
   }
+  public void run(double speed) {
+    IntakeMotor.set(speed);
+  }
   /**Stops the motor that intakes notes*/
   public void stop() {
     IntakeMotor.set(0);

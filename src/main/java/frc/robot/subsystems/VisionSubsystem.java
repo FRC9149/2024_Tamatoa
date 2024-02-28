@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class VisionSubsystem {
   public static NetworkTable Table;
 	
-  public static final double cameraHeight = 0;
+  public static final double cameraHeight = 39;
   public static final double cameraXAngle = 0;
   public static final double cameraYAngle = 0;
 

@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
@@ -28,7 +29,7 @@ import frc.robot.commands.noteCommands.OutakeControl;
 import frc.robot.commands.noteCommands.ampControl;
 import frc.robot.commands.noteCommands.runServo;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-//import frc.robot.subsystems.LedStrip;
+import frc.robot.subsystems.LedStrip;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.noteSubsystems.AmpMotor;
 import frc.robot.subsystems.noteSubsystems.IntakeArm;
@@ -60,8 +61,8 @@ public class RobotContainer {
   private final AmpMotor ampMotor = new AmpMotor(false);
   private final IntakeArm intakeArm = new IntakeArm(false);
 
-  //private final LedStrip outakeLedStrip = new LedStrip(8, 0);
-  //private final LedStrip mainLEDS = new LedStrip(7, 0);
+  private final LedStrip outakeLedStrip = new LedStrip(8, 1);
+  private final LedStrip mainLEDS = new LedStrip(9, 10);
   
   public static final XboxController driverXbox = new XboxController(0);
   public static final XboxController opXbox = new XboxController(1);
@@ -121,16 +122,16 @@ public class RobotContainer {
       driverXbox.setRumble(RumbleType.kBothRumble, 0);
       return new EmptyCommand();
     })));
-    
 
-    new JoystickButton(opXbox, ControllerButtons.lbButton).whileTrue(new IntakeControl(intake, true));
-    new JoystickButton(opXbox, ControllerButtons.rbButton).whileTrue(new OutakeControl(launcher, intake));
+    new Trigger(()->{return opXbox.getRightTriggerAxis()>0.1;}).whileTrue(new OutakeControl(launcher, intake));
+    new Trigger(() -> {return opXbox.getLeftTriggerAxis()>0.1;}).whileTrue(new IntakeControl(intake, true));
+    new JoystickButton(opXbox, ControllerButtons.rbButton).whileTrue(new OutakeControl(launcher, intake, true));
+    new JoystickButton(opXbox, ControllerButtons.lbButton).whileTrue(new IntakeControl(intake, false));
 
     new JoystickButton(opXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(intakeArm, false));
     new JoystickButton(opXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(intakeArm, true));
 
     new JoystickButton(opXbox, ControllerButtons.capture).onTrue(new InstantCommand(intakeArm::removeBrake));
-    new JoystickButton(opXbox, ControllerButtons.bButton).whileTrue(new IntakeControl(intake, false));
     new JoystickButton(opXbox, ControllerButtons.aButton).whileTrue(new ampControl(ampMotor));
 
     new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new runServo(servo, 180));
