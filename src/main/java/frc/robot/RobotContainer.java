@@ -6,7 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
@@ -29,7 +28,6 @@ import frc.robot.commands.noteCommands.OutakeControl;
 import frc.robot.commands.noteCommands.ampControl;
 import frc.robot.commands.noteCommands.runServo;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.subsystems.LedStrip;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.noteSubsystems.AmpMotor;
 import frc.robot.subsystems.noteSubsystems.IntakeArm;
@@ -60,9 +58,6 @@ public class RobotContainer {
   private final LaunchingMotors launcher = new LaunchingMotors(false);
   private final AmpMotor ampMotor = new AmpMotor(false);
   private final IntakeArm intakeArm = new IntakeArm(false);
-
-  private final LedStrip outakeLedStrip = new LedStrip(8, 1);
-  private final LedStrip mainLEDS = new LedStrip(9, 10);
   
   public static final XboxController driverXbox = new XboxController(0);
   public static final XboxController opXbox = new XboxController(1);
@@ -76,7 +71,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeDown", new NoteTransfer(intakeArm, true).withTimeout(1));
     NamedCommands.registerCommand("IntakeUp", new NoteTransfer(intakeArm, false).withTimeout(1));
     NamedCommands.registerCommand("RunIntake", new IntakeControl(intake, true));
-    NamedCommands.registerCommand("LaunchNote", new OutakeControl(launcher, intake).withTimeout(1));
+    NamedCommands.registerCommand("LaunchNote", new OutakeControl(launcher, intake, false).withTimeout(1));
 
     drivebase.setupPathPlanner();
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -123,7 +118,7 @@ public class RobotContainer {
       return new EmptyCommand();
     })));
 
-    new Trigger(()->{return opXbox.getRightTriggerAxis()>0.1;}).whileTrue(new OutakeControl(launcher, intake));
+    new Trigger(()->{return opXbox.getRightTriggerAxis()>0.1;}).whileTrue(new OutakeControl(launcher, intake, false));
     new Trigger(() -> {return opXbox.getLeftTriggerAxis()>0.1;}).whileTrue(new IntakeControl(intake, true));
     new JoystickButton(opXbox, ControllerButtons.rbButton).whileTrue(new OutakeControl(launcher, intake, true));
     new JoystickButton(opXbox, ControllerButtons.lbButton).whileTrue(new IntakeControl(intake, false));
