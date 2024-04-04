@@ -72,7 +72,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeUp", new NoteTransfer(intakeArm, false).withTimeout(1));
     NamedCommands.registerCommand("RunIntake", new IntakeControl(intake, true));
     NamedCommands.registerCommand("LaunchNote", new OutakeControl(launcher, intake, false).withTimeout(1));
-
+    NamedCommands.registerCommand("Short Burst", new OutakeControl(launcher, intake, true).withTimeout(0.75));
+    
     drivebase.setupPathPlanner();
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData(autoChooser);
