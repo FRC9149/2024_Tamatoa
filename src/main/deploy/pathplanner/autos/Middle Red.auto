@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.18698345088998,
-      "y": 5.525487974052871
+      "x": 15.823746112542153,
+      "y": 4.403274541213847
     },
-    "rotation": 180.0
+    "rotation": -119.5
   },
   "command": {
     "type": "sequential",
@@ -30,13 +30,57 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Pickup Middle Red"
+                  "pathName": "Bottom note red"
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "RunIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeUp"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Home Red"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "LaunchNote"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "middle note red"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeDown"
                 }
               }
             ]
@@ -68,45 +112,32 @@
           }
         },
         {
-          "type": "race",
+          "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Bottom Note Red"
+                  "name": "IntakeDown"
                 }
               },
               {
-                "type": "sequential",
+                "type": "path",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "IntakeUp"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "RunIntake"
-                      }
-                    }
-                  ]
+                  "pathName": "top note red"
                 }
               }
             ]
           }
         },
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Bottom Home Red"
+                  "pathName": "Home Red"
                 }
               },
               {
@@ -127,7 +158,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Leave Middle Red"
+            "pathName": "Leave middle red"
           }
         }
       ]

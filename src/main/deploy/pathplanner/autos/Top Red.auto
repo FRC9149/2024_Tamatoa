@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.823746112542153,
-      "y": 4.403274541213847
+      "x": 15.812035275996372,
+      "y": 6.67517683109546
     },
-    "rotation": -119.5
+    "rotation": 120.0
   },
   "command": {
     "type": "sequential",
@@ -20,7 +20,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Leave bottom red"
+            "pathName": "short leave red"
           }
         }
       ]

@@ -8,36 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 13.797771390121952,
-        "y": 5.211322262872771
+        "x": 14.957144208154324,
+        "y": 5.550936522700434
       },
       "isLocked": false,
       "linkedName": "Home Red"
     },
     {
       "anchor": {
-        "x": 12.603266062452239,
-        "y": 5.995948311440133
+        "x": 14.078831467220711,
+        "y": 5.525487974052871
       },
       "prevControl": {
-        "x": 13.741463839942067,
-        "y": 5.2013574101736495
-      },
-      "nextControl": {
-        "x": 11.361917388599398,
-        "y": 6.862550215827963
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 9.89806282037671,
-        "y": 6.2770083885388885
-      },
-      "prevControl": {
-        "x": 10.612423849669383,
-        "y": 6.241875878901543
+        "x": 13.91487975557977,
+        "y": 5.562647359246215
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,7 +30,31 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.05,
+      "command": {
+        "type": "race",
+        "data": {
+          "commands": [
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 1.5
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "RunIntake"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.9,
     "maxAcceleration": 3.25,

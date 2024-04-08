@@ -3,41 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.36086297850199,
-        "y": 5.550936522700434
+        "x": 1.8410072768790318,
+        "y": 7.63
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3983042839124167,
-        "y": 5.555029699217743
+        "x": 1.8761397865163765,
+        "y": 7.641710836545782
       },
       "isLocked": false,
-      "linkedName": "Home Blue"
+      "linkedName": "Blue Amp"
     },
     {
       "anchor": {
-        "x": 3.8904036723907955,
-        "y": 6.569779302183426
+        "x": 7.1928595783011815,
+        "y": 6.944526071648434
       },
       "prevControl": {
-        "x": 2.592686169056359,
-        "y": 6.422477181170482
-      },
-      "nextControl": {
-        "x": 5.188121175725231,
-        "y": 6.717081423196371
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 7.087462049389147,
-        "y": 6.405827590542485
-      },
-      "prevControl": {
-        "x": 7.0757512128433655,
-        "y": 6.4175384270882665
+        "x": 7.169437905209619,
+        "y": 6.101345840352166
       },
       "nextControl": null,
       "isLocked": false,
@@ -59,9 +43,9 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "blue",
+  "folder": "blue amp",
   "previewStartingState": {
-    "rotation": 0.0,
+    "rotation": -90.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

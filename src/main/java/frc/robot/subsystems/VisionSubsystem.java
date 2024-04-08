@@ -10,11 +10,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class VisionSubsystem {
   public static NetworkTable Table;
 	
-  public static final double cameraHeight = 39;
+  public static final double cameraHeight = 0.4064;
   public static final double cameraXAngle = 0;
   public static final double cameraYAngle = 0;
 
-  public void init() {
+  public VisionSubsystem() {
     try {
       Table = NetworkTableInstance.getDefault().getTable("limelight");
     }catch (Exception e) {
@@ -41,8 +41,18 @@ public class VisionSubsystem {
       return null;
   }
 
-  private double Distance(double height) {
+  public double Distance(double height) {
     //already checks to see if limelight is connected in the only functions that call it PickUpNote
-    return (height - cameraHeight/Math.tan(cameraYAngle+Table.getEntry("ty").getDouble(0)));
+    double temp = Math.abs(((height - cameraHeight)/Math.tan(cameraYAngle+Table.getEntry("ty").getDouble(0)))) + 1;
+    //for (int i = 0; i < 50; i++) {
+    //  temp += ((height - cameraHeight)/Math.tan(cameraYAngle+Table.getEntry("ty").getDouble(0)));
+    //}
+    //temp /= 11;
+    SmartDashboard.putNumber("Distance to Note: ", temp);
+    return temp;
+  }
+
+  public double getTy() {
+    return Table.getEntry("ty").getDouble(0);
   }
 }

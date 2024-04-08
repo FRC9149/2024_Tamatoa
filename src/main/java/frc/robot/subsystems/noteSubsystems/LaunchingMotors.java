@@ -27,4 +27,8 @@ public class LaunchingMotors extends SubsystemBase {
     launchMotors[0].set(0);
     launchMotors[1].set(0);
   }
+  public void run(double speed){
+    launchMotors[0].set(speed);
+    launchMotors[1].set(speed);
+  }
 }

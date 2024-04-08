@@ -17,12 +17,12 @@ public class NoteTransfer extends Command {
   public NoteTransfer(IntakeArm corgi, boolean flip) {
     system = corgi;
     addRequirements(system);
-    desiredAngle = !flip ? -195 : 0;
+    desiredAngle = flip ? 0 : -195;
   }
   @Override
   public void initialize() {
     system.setBraking(desiredAngle != 0);
-    system.run(desiredAngle == 0 ? 0.5 : -0.5);
+    system.run(desiredAngle == 0 ? 0.75 : -0.75);
     RobotContainer.opXbox.setRumble(desiredAngle == 0 ? RumbleType.kRightRumble : RumbleType.kLeftRumble , 1);
   }
   @Override
