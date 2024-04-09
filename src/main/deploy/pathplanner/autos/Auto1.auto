@@ -2,25 +2,32 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.8410072768790318,
-      "y": 7.647176264395325
+      "x": 3.0274679511791946,
+      "y": 6.065186799425477
     },
-    "rotation": -90.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Short Burst"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeDown"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "rotate around"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeDown"
+                }
+              }
+            ]
           }
         },
         {
@@ -30,7 +37,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Blue Amp Pickup"
+                  "pathName": "pickup Auto 1"
                 }
               },
               {
@@ -49,7 +56,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "blue amp start"
+                  "pathName": "return Auto 1"
                 }
               },
               {
@@ -64,18 +71,12 @@
         {
           "type": "named",
           "data": {
-            "name": "Short Burst"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Leave blue amp"
+            "name": "LaunchNote"
           }
         }
       ]
     }
   },
-  "folder": "Blue",
+  "folder": null,
   "choreoAuto": false
 }

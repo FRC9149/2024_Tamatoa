@@ -3,38 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7518994781213513,
-        "y": 4.403274541213847
+        "x": 3.0,
+        "y": 6.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.7636103146671323,
-        "y": 4.391563704668067
+        "x": 3.851769574737719,
+        "y": 4.883888143447127
       },
       "isLocked": false,
-      "linkedName": "Bottom Home Blue"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.3211515752560734,
-        "y": 4.11050362756931
+        "x": 3.0,
+        "y": 7.0
       },
       "prevControl": {
-        "x": 2.3014176896344556,
-        "y": 4.11050362756931
+        "x": 4.365768456044965,
+        "y": 7.734284116153205
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.65,
-      "rotationDegrees": 0,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -45,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0,
+    "rotation": 180.0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "blue",
+  "folder": "Auto1 Paths",
   "previewStartingState": {
-    "rotation": -60.0,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": true
