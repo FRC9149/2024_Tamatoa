@@ -135,15 +135,15 @@ public class RobotContainer {
 
     new JoystickButton(driverXbox, ControllerButtons.xButton).and(new Trigger(()->twoControllers.getSelected())).onTrue(new NoteTransfer(intakeArm, false));
     new JoystickButton(driverXbox, ControllerButtons.yButton).and(new Trigger(()->twoControllers.getSelected())).onTrue(new NoteTransfer(intakeArm, true));
-    new JoystickButton(opXbox, ControllerButtons.xButton).and(new Trigger(()->!twoControllers.getSelected())).onTrue(new NoteTransfer(intakeArm, false));
-    new JoystickButton(opXbox, ControllerButtons.yButton).and(new Trigger(()->!twoControllers.getSelected())).onTrue(new NoteTransfer(intakeArm, true));
+    new JoystickButton(opXbox, ControllerButtons.xButton).and(new Trigger(()->!opXbox.getAButton())).and(new Trigger(()->!twoControllers.getSelected())).onTrue(new NoteTransfer(intakeArm, false));
+    new JoystickButton(opXbox, ControllerButtons.yButton).and(new Trigger(()->!opXbox.getAButton())).and(new Trigger(()->!twoControllers.getSelected())).onTrue(new NoteTransfer(intakeArm, true));
 
     Trigger leftInTrigger = new JoystickButton(opXbox, ControllerButtons.leftIn);
     new JoystickButton(opXbox, ControllerButtons.rightIn).and(leftInTrigger).onTrue(new InstantCommand(intakeArm::removeBrake));
     
     new JoystickButton(opXbox, ControllerButtons.menu).onTrue(new InstantCommand(drivebase::zeroGyro));
 
-    new JoystickButton(opXbox, ControllerButtons.bButton).whileTrue(new IntakeControl(intake, false));
+    new JoystickButton(opXbox, ControllerButtons.bButton).and(new Trigger(()->!opXbox.getAButton())).whileTrue(new IntakeControl(intake, false));
 
     new JoystickButton(opXbox, ControllerButtons.aButton ).and(
     new JoystickButton(opXbox, ControllerButtons.bButton)).and(
