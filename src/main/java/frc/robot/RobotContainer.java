@@ -23,13 +23,11 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ControllerButtons;
-import frc.robot.commands.EmptyCommand;
 import frc.robot.commands.noteCommands.IntakeControl;
 import frc.robot.commands.noteCommands.NoteTransfer;
 import frc.robot.commands.noteCommands.OutakeControl;
 import frc.robot.commands.noteCommands.ampControl;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.subsystems.LedStrip;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.noteSubsystems.AmpMotor;
 import frc.robot.subsystems.noteSubsystems.IntakeArm;
@@ -37,6 +35,7 @@ import frc.robot.subsystems.noteSubsystems.IntakeMotor;
 import frc.robot.subsystems.noteSubsystems.LaunchingMotors;
 
 import java.io.File;
+import java.util.function.Consumer;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -56,15 +55,24 @@ public class RobotContainer {
   private final IntakeMotor intake = new IntakeMotor(false);
   private final LaunchingMotors launcher = new LaunchingMotors(false);
   private final IntakeArm intakeArm = new IntakeArm(false);
-
-  private final LedStrip outakeLedStrip = new LedStrip(8, 1);
-  private final LedStrip mainLEDS = new LedStrip(9, 10);
   
   public static final XboxController driverXbox = new XboxController(0);
   public static final XboxController opXbox = new XboxController(1);
-  public static double speed = 1;
   
-  private SendableChooser<Command> autoChooser;
+  private SendableChooser<Command> autoChooser, drivetype;
+  private SendableChooser<Double> speed, outakeSpeed;
+
+  Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
+    () -> MathUtil.applyDeadband(-driverXbox.getLeftY() / speed.getSelected(), OperatorConstants.LEFT_Y_DEADBAND),
+    () -> MathUtil.applyDeadband(-driverXbox.getLeftX() / speed.getSelected(), OperatorConstants.LEFT_X_DEADBAND),
+    () -> MathUtil.applyDeadband(-driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
+    () -> MathUtil.applyDeadband(-driverXbox.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)
+  );
+  Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
+    () -> MathUtil.applyDeadband(driverXbox.getLeftY()/speed.getSelected(), OperatorConstants.LEFT_Y_DEADBAND),
+    () -> MathUtil.applyDeadband(driverXbox.getLeftX()/speed.getSelected(), OperatorConstants.LEFT_X_DEADBAND),
+    () -> driverXbox.getRightX() * 0.5
+  );
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -73,26 +81,24 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeDown", new NoteTransfer(intakeArm, false).withTimeout(.75));
     NamedCommands.registerCommand("IntakeUp", new NoteTransfer(intakeArm, true).withTimeout(.75));
     NamedCommands.registerCommand("RunIntake", new IntakeControl(intake, true));
-    NamedCommands.registerCommand("LaunchNote", new OutakeControl(launcher, intake).withTimeout(1));
+    NamedCommands.registerCommand("LaunchNote", new OutakeControl(launcher, intake, outakeSpeed.getSelected()).withTimeout(1));
 
     drivebase.setupPathPlanner();
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData(autoChooser);
+    SmartDashboard.putData(speed);
+    SmartDashboard.putData(outakeSpeed);
     configureBindings();
 
-    // Applies deadbands and inverts controls because joysticks
-    // are back-right positive while robot
-    
-    // controls are front-left positive
-    // left stick controls translation
-    // right stick controls the desired angle NOT angular rotation
-    Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(-driverXbox.getLeftY() / speed, OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(-driverXbox.getLeftX() / speed, OperatorConstants.LEFT_X_DEADBAND),
-        () -> MathUtil.applyDeadband(-driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
-        () -> MathUtil.applyDeadband(-driverXbox.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)
-    );
-    drivebase.setDefaultCommand( driveFieldOrientedDirectAngle );
+    drivetype.addOption("direct", driveFieldOrientedDirectAngle);
+    drivetype.addOption("angular", driveFieldOrientedAnglularVelocity);
+    SmartDashboard.putData(drivetype);
+
+    drivetype.onChange(cmd -> updateDriveCommand(cmd));
+  }
+
+  void updateDriveCommand(Command cmd) {
+    drivebase.setDefaultCommand(cmd);
   }
 
   /**
@@ -104,51 +110,29 @@ public class RobotContainer {
    */
   private void configureBindings() {
     new JoystickButton(driverXbox, ControllerButtons.menu).onTrue(new InstantCommand(drivebase::zeroGyro));
-    new Trigger(()->{return driverXbox.getRightTriggerAxis()>0.1;}).whileTrue(Commands.deferredProxy(()->{
-      speed = 1 + (driverXbox.getRightTriggerAxis() * 2);
-      return new EmptyCommand();
-    })).negate().onTrue(Commands.deferredProxy(()->{
-      speed = 1;
-      return new EmptyCommand();
+
+    new Trigger(()->{return driverXbox.getRightTriggerAxis()>0.1;}).whileTrue(new OutakeControl(launcher, intake, outakeSpeed.getSelected()));
+    new Trigger(()->{return driverXbox.getLeftTriggerAxis() >0.1;}).whileTrue(new IntakeControl(intake, true));
+
+    new JoystickButton(driverXbox, ControllerButtons.bButton).whileTrue(new IntakeControl(intake, false));
+
+    new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(intakeArm, false));
+    new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(intakeArm, true));
+
+    Trigger leftInTrigger = new JoystickButton(driverXbox, ControllerButtons.leftIn);
+    new JoystickButton(driverXbox, ControllerButtons.rightIn).and(leftInTrigger).onTrue(new InstantCommand(intakeArm::removeBrake));
+    
+    new JoystickButton(driverXbox, ControllerButtons.aButton ).and(
+    new JoystickButton(driverXbox, ControllerButtons.bButton)).and(
+    new JoystickButton(driverXbox, ControllerButtons.xButton)).and(
+    new JoystickButton(driverXbox, ControllerButtons.yButton)).toggleOnTrue(Commands.deferredProxy(()->{
+      updateDriveCommand(drivebase.driveCommand(
+        () -> {return 0;},
+        () -> {return 0;},
+        () -> {return .5;}
+      ));
+      return null;
     }));
-
-    //new JoystickButton(driverXbox, ControllerButtons.aButton).whileTrue(AutoBuilder.pathfindThenFollowPath(
-    //  PathPlannerPath.fromPathFile(DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get()==Alliance.Red ? "Home Red" : "Home Blue" : ""), 
-    //  new PathConstraints(2, 2, 540, 720)
-    //));
-
-    //movement breaks this command 
-    //need to configure limelight image proccessing more to stop values from jumping around
-    //enable auto movement toward note
-    new Trigger(()->{return driverXbox.getPOV()==180;}).whileTrue(Commands.deferredProxy(()->{
-      //Pose2d movement = vision.PickUpNote();
-      VisionSubsystem vision = new VisionSubsystem();
-      //SmartDashboard.putNumber("x: ", movement.getX());
-      //SmartDashboard.putNumber("y: ", movement.getY());
-      //SmartDashboard.putNumber("rot: ", movement.getRotation().getDegrees());
-      //drivebase.drive(new Translation2d(movement.getX(), movement.getY()), movement.getRotation().getDegrees(), false);
-      SmartDashboard.putNumber("Distance: ", vision.Distance(1.12));
-      SmartDashboard.putNumber("ty: ", vision.getTy());
-      return new EmptyCommand();
-    }));
-
-    //new JoystickButton(driverXbox, ControllerButtons.aButton).whileTrue(drivebase.driveToPose(
-    //  new Pose2d(
-    //    drivebase.getPose().getX() + 1,
-    //    drivebase.getPose().getY(),
-    //    new Rotation2d(0)
-    //  )
-    //));
-
-    new Trigger(()->{return opXbox.getRightTriggerAxis()>0.1;}).whileTrue(new OutakeControl(launcher, intake, false));
-    new Trigger(() -> {return opXbox.getLeftTriggerAxis()>0.1;}).whileTrue(new IntakeControl(intake, true));
-    new JoystickButton(opXbox, ControllerButtons.rbButton).whileTrue(new OutakeControl(launcher, intake, true));
-    new JoystickButton(opXbox, ControllerButtons.lbButton).whileTrue(new IntakeControl(intake, false));
-
-    new JoystickButton(opXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(intakeArm, false));
-    new JoystickButton(opXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(intakeArm, true));
-
-    new JoystickButton(opXbox, ControllerButtons.capture).onTrue(new InstantCommand(intakeArm::removeBrake));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -160,9 +144,6 @@ public class RobotContainer {
     return autoChooser.getSelected();
   }
 
-  public void setDriveMode() {
-    //drivebase.setDefaultCommand();
-  }
 
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);

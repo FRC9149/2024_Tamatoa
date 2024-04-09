@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
-import frc.robot.commands.EmptyCommand;
 
 import java.io.File;
 import java.util.function.DoubleSupplier;
@@ -149,7 +148,7 @@ public class SwerveSubsystem extends SubsystemBase
     // Create a path following command using AutoBuilder. This will also trigger event markers.
     //return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
     //return AutoBuilder.
-    return new EmptyCommand();
+    return null;
   }
 
   /**

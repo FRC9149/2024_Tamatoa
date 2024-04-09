@@ -11,8 +11,8 @@ public class OutakeControl extends Command{
   private IntakeMotor intakeSystem;
   //private LedStrip led;
   private double ticks, tick = 0.035;
-  boolean Slow = false;
-  public OutakeControl(LaunchingMotors LauncherSubsystem, IntakeMotor IntakeSubsystem, boolean slow) {
+  double Slow = 0.0;
+  public OutakeControl(LaunchingMotors LauncherSubsystem, IntakeMotor IntakeSubsystem, double slow) {
     launchSystem = LauncherSubsystem;
     intakeSystem = IntakeSubsystem;
     addRequirements(IntakeSubsystem, launchSystem);
@@ -21,13 +21,13 @@ public class OutakeControl extends Command{
 
   @Override
   public void initialize() {
-    launchSystem.run(Slow ? .1 : 1);
+    launchSystem.run(1/Slow);
     RobotContainer.opXbox.setRumble(RumbleType.kBothRumble, 1);
   }
   @Override
   public void execute() {
     ticks += tick;
-    if(ticks >= 1 || Slow) intakeSystem.run(false);
+    if(ticks >= 1) intakeSystem.run(false);
   }
   @Override
   public boolean isFinished() {
