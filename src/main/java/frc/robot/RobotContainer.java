@@ -61,16 +61,17 @@ public class RobotContainer {
   
   private SendableChooser<Command> autoChooser, drivetype;
   private SendableChooser<Double> speed, outakeSpeed;
+  private SendableChooser<Boolean> twoControllers;
 
   Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
-    () -> MathUtil.applyDeadband(-driverXbox.getLeftY() / speed.getSelected(), OperatorConstants.LEFT_Y_DEADBAND),
-    () -> MathUtil.applyDeadband(-driverXbox.getLeftX() / speed.getSelected(), OperatorConstants.LEFT_X_DEADBAND),
+    () -> MathUtil.applyDeadband((-driverXbox.getLeftY() * speed.getSelected()) * (1 - opXbox.getLeftTriggerAxis()) , OperatorConstants.LEFT_Y_DEADBAND),
+    () -> MathUtil.applyDeadband((-driverXbox.getLeftX() * speed.getSelected()) * (1 - opXbox.getLeftTriggerAxis()) , OperatorConstants.LEFT_X_DEADBAND),
     () -> MathUtil.applyDeadband(-driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
     () -> MathUtil.applyDeadband(-driverXbox.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)
   );
   Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-    () -> MathUtil.applyDeadband(driverXbox.getLeftY()/speed.getSelected(), OperatorConstants.LEFT_Y_DEADBAND),
-    () -> MathUtil.applyDeadband(driverXbox.getLeftX()/speed.getSelected(), OperatorConstants.LEFT_X_DEADBAND),
+    () -> MathUtil.applyDeadband((-driverXbox.getLeftY() * speed.getSelected()) * (1 - opXbox.getLeftTriggerAxis()), OperatorConstants.LEFT_Y_DEADBAND),
+    () -> MathUtil.applyDeadband((-driverXbox.getLeftX() * speed.getSelected()) * (1 - opXbox.getLeftTriggerAxis()), OperatorConstants.LEFT_X_DEADBAND),
     () -> driverXbox.getRightX() * 0.5
   );
 
@@ -83,16 +84,23 @@ public class RobotContainer {
     NamedCommands.registerCommand("RunIntake", new IntakeControl(intake, true));
     NamedCommands.registerCommand("LaunchNote", new OutakeControl(launcher, intake, outakeSpeed.getSelected()).withTimeout(1));
 
+    drivetype.setDefaultOption("direct", driveFieldOrientedDirectAngle);
+    drivetype.addOption("angular", driveFieldOrientedAnglularVelocity);
+
+    twoControllers.setDefaultOption("One Controller", true);
+    twoControllers.addOption("Two Controller", false);
+
+    speed.setDefaultOption("1", 1.0);
+    outakeSpeed.setDefaultOption("1", 1.0);
+
     drivebase.setupPathPlanner();
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData(autoChooser);
     SmartDashboard.putData(speed);
     SmartDashboard.putData(outakeSpeed);
-    configureBindings();
-
-    drivetype.addOption("direct", driveFieldOrientedDirectAngle);
-    drivetype.addOption("angular", driveFieldOrientedAnglularVelocity);
+    SmartDashboard.putData(twoControllers);
     SmartDashboard.putData(drivetype);
+    configureBindings();
 
     drivetype.onChange(cmd -> updateDriveCommand(cmd));
   }
@@ -109,27 +117,42 @@ public class RobotContainer {
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
    */
   private void configureBindings() {
-    new JoystickButton(driverXbox, ControllerButtons.menu).onTrue(new InstantCommand(drivebase::zeroGyro));
-
+    /*Driver Controller:
+     *    Driving sticks
+     *    Shooting: right trigger
+     * 
+     *Operator Controller:
+     *    intake: right bumper (switches)
+     *    arm up/down: x/y (switches)
+     *    remove brake: both sticks
+     *    spin forever: 4 letter buttons
+     *    slow down: left Trigger
+     *    release note: b
+     */
     new Trigger(()->{return driverXbox.getRightTriggerAxis()>0.1;}).whileTrue(new OutakeControl(launcher, intake, outakeSpeed.getSelected()));
-    new Trigger(()->{return driverXbox.getLeftTriggerAxis() >0.1;}).whileTrue(new IntakeControl(intake, true));
+    new JoystickButton(driverXbox, ControllerButtons.rbButton).and(new Trigger(()->twoControllers.getSelected())).whileTrue(new IntakeControl(intake, true));
+    new JoystickButton(opXbox, ControllerButtons.rbButton).and(new Trigger(()->!twoControllers.getSelected())).whileTrue(new IntakeControl(intake, true));
 
-    new JoystickButton(driverXbox, ControllerButtons.bButton).whileTrue(new IntakeControl(intake, false));
+    new JoystickButton(driverXbox, ControllerButtons.xButton).and(new Trigger(()->twoControllers.getSelected())).onTrue(new NoteTransfer(intakeArm, false));
+    new JoystickButton(driverXbox, ControllerButtons.yButton).and(new Trigger(()->twoControllers.getSelected())).onTrue(new NoteTransfer(intakeArm, true));
+    new JoystickButton(opXbox, ControllerButtons.xButton).and(new Trigger(()->!twoControllers.getSelected())).onTrue(new NoteTransfer(intakeArm, false));
+    new JoystickButton(opXbox, ControllerButtons.yButton).and(new Trigger(()->!twoControllers.getSelected())).onTrue(new NoteTransfer(intakeArm, true));
 
-    new JoystickButton(driverXbox, ControllerButtons.xButton).onTrue(new NoteTransfer(intakeArm, false));
-    new JoystickButton(driverXbox, ControllerButtons.yButton).onTrue(new NoteTransfer(intakeArm, true));
-
-    Trigger leftInTrigger = new JoystickButton(driverXbox, ControllerButtons.leftIn);
-    new JoystickButton(driverXbox, ControllerButtons.rightIn).and(leftInTrigger).onTrue(new InstantCommand(intakeArm::removeBrake));
+    Trigger leftInTrigger = new JoystickButton(opXbox, ControllerButtons.leftIn);
+    new JoystickButton(opXbox, ControllerButtons.rightIn).and(leftInTrigger).onTrue(new InstantCommand(intakeArm::removeBrake));
     
-    new JoystickButton(driverXbox, ControllerButtons.aButton ).and(
-    new JoystickButton(driverXbox, ControllerButtons.bButton)).and(
-    new JoystickButton(driverXbox, ControllerButtons.xButton)).and(
-    new JoystickButton(driverXbox, ControllerButtons.yButton)).toggleOnTrue(Commands.deferredProxy(()->{
+    new JoystickButton(opXbox, ControllerButtons.menu).onTrue(new InstantCommand(drivebase::zeroGyro));
+
+    new JoystickButton(opXbox, ControllerButtons.bButton).whileTrue(new IntakeControl(intake, false));
+
+    new JoystickButton(opXbox, ControllerButtons.aButton ).and(
+    new JoystickButton(opXbox, ControllerButtons.bButton)).and(
+    new JoystickButton(opXbox, ControllerButtons.xButton)).and(
+    new JoystickButton(opXbox, ControllerButtons.yButton)).toggleOnTrue(Commands.deferredProxy(()->{
       updateDriveCommand(drivebase.driveCommand(
         () -> {return 0;},
         () -> {return 0;},
-        () -> {return .5;}
+        () -> {return 1 - opXbox.getLeftTriggerAxis();}
       ));
       return null;
     }));

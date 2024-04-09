@@ -21,7 +21,7 @@ public class OutakeControl extends Command{
 
   @Override
   public void initialize() {
-    launchSystem.run(1/Slow);
+    launchSystem.run(1*Slow);
     RobotContainer.opXbox.setRumble(RumbleType.kBothRumble, 1);
   }
   @Override
