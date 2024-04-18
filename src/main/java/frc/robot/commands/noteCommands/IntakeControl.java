@@ -17,7 +17,6 @@ public class IntakeControl extends Command {
   @Override
   public void initialize() {
     system.run(isIntake ? 1 : -1);
-    RobotContainer.opXbox.setRumble(RumbleType.kBothRumble, 1);
   }
   @Override
   public boolean isFinished() {
@@ -26,7 +25,6 @@ public class IntakeControl extends Command {
   @Override
   public void end(boolean interuppted){
     system.stop();
-    RobotContainer.opXbox.setRumble(RumbleType.kBothRumble, 0);
   }
 
 }

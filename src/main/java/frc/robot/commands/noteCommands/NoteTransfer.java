@@ -23,7 +23,6 @@ public class NoteTransfer extends Command {
   public void initialize() {
     system.setBraking(desiredAngle != 0);
     system.run(desiredAngle == 0 ? 0.75 : -0.75);
-    RobotContainer.opXbox.setRumble(desiredAngle == 0 ? RumbleType.kRightRumble : RumbleType.kLeftRumble , 1);
   }
   @Override
   public boolean isFinished() {
@@ -33,6 +32,5 @@ public class NoteTransfer extends Command {
   public void end(boolean interuppted) {
     system.stop();
     //if(desiredAngle != 0) system.run(0.01);
-    RobotContainer.opXbox.setRumble(RumbleType.kBothRumble, 0);
   }
 }

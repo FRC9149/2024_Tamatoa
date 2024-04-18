@@ -22,7 +22,6 @@ public class OutakeControl extends Command{
   @Override
   public void initialize() {
     launchSystem.run(1*Slow);
-    RobotContainer.opXbox.setRumble(RumbleType.kBothRumble, 1);
   }
   @Override
   public void execute() {
@@ -38,6 +37,5 @@ public class OutakeControl extends Command{
     ticks = 0;
   	launchSystem.stop();
     intakeSystem.stop();
-    RobotContainer.opXbox.setRumble(RumbleType.kBothRumble, 0);
   }
 }
