@@ -17,7 +17,7 @@ public class NoteTransfer extends Command {
   public NoteTransfer(IntakeArm corgi, boolean flip) {
     system = corgi;
     addRequirements(system);
-    desiredAngle = flip ? 0 : -195;
+    desiredAngle = flip ? 0 : -190;
   }
   @Override
   public void initialize() {

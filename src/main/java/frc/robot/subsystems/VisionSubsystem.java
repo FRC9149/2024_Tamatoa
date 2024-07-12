@@ -6,8 +6,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class VisionSubsystem {
+public class VisionSubsystem extends SubsystemBase{
   public static NetworkTable Table;
 	
   public static final double cameraHeight = 0.4064;
@@ -52,7 +53,6 @@ public class VisionSubsystem {
     return temp;
   }
 
-  public double getTy() {
-    return Table.getEntry("ty").getDouble(0);
-  }
+  public double getTy() { return Table.getEntry("ty").getDouble(0); }
+  public double getTx() { return Table.getEntry("tx").getDouble(0); }
 }
