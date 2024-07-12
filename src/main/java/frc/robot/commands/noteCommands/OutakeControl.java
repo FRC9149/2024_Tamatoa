@@ -25,8 +25,8 @@ public class OutakeControl extends Command{
   public void initialize() { launchSystem.run(speed); }
   @Override
   public void execute() {
-    //ticks += tick;
-    //if(ticks >= 1) intakeSystem.run(false);
+    ticks += tick;
+    if(ticks >= 1) intakeSystem.run(false);
   }
   @Override
   public boolean isFinished() { return false; }
